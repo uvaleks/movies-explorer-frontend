@@ -28,5 +28,4 @@
     object-position: left;
     max-height: 100%;
     box-sizing: contain-box;
-    transition: all .3s ease;
 }
