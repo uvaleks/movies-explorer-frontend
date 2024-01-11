@@ -143,7 +143,8 @@
     }
 
     .navigation__burger {
-        background-image: url(../../images/burger.svg) 30px 30px;
+        background-image: url(../../images/burger.svg);
+        background-size: 30px;
         background-color: transparent;
         background-position: right 22px top 50%;
         background-repeat: no-repeat;
@@ -155,13 +156,29 @@
         margin-top: auto;
     }
 
-    .navigation__close {
+    .navigation__burger_close {
         background-image: url(../../images/close-to-burger.svg);
     }
 
     .navigation__profile-icon {
         background-image: url(../../images/profile-dark.svg);
         background-color: var(--light3);
+    }
+
+    .navigation__wrapper_hidden {
+        background-color: transparent;
+    }
+
+    .navigation__wrapper_hidden > .navigation {
+        background-color: transparent;
+    }
+
+    .navigation__wrapper_hidden > .navigation > .navigation__bar {
+        display: none;
+    }
+
+    .navigation__wrapper_hidden > .navigation > .navigation__button {
+        display: none;
     }
 }
 

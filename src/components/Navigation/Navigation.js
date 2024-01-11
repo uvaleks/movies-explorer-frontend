@@ -3,9 +3,9 @@ import './Navigation.css';
 
 export default function Navigation() {
     return (
-        <div className="navigation__wrapper">
+        <div className="navigation__wrapper navigation__wrapper_hidden">
             <nav className="navigation">
-                <div className="navigation__burger navigation__close"></div>
+                <div className="navigation__burger"></div>
                 <div className="navigation__bar navigation__bar_hidden">
                     <p className="navigation__link" href="#">Регистрация</p>
                     <div className="navigation__button navigation__button_filled" href="#">
