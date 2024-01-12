@@ -1,4 +1,5 @@
 .main__section-heading {
+        width: 100%;
         color: var(--dark);
         margin: 0;
         font-size: 22px;
