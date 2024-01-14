@@ -1,0 +1,117 @@
+.about-project {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 110px 70px;
+    box-sizing: border-box;
+}
+
+.about-project__facts {
+    display: flex;
+    gap: 30px;
+    padding: 70px 0 93px;
+}
+
+.about-project__fact {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.about-project__fact-heading {
+    color: var(--dark);
+    font-size: 20px;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.8px;
+    margin: 0;
+}
+
+.about-project__fact-text {
+    color: var(--dark);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+    margin: 0;
+}
+
+.about-project__timeline {
+    display: flex;
+}
+
+.about-project__milestone {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.about-project__milestone_backend {
+    width: 228px;
+}
+
+.about-project__milestone_frontend {
+    width: 100%;
+}
+
+.about-project__milestone-bar {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.about-project__milestone-bar_backend {
+    background-color: var(--dark);
+    color: var(--light);
+}
+
+.about-project__milestone-bar_frontend {
+    background-color: var(--light5);
+    color: var(--dark);
+}
+
+.about-project__milestone-text {
+    color: var(--dark4);
+    display: flex;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 17px;
+    margin: 0;
+}
+
+@media screen and (max-width: 768px) {
+    .about-project {
+        padding: 90px 50px;
+    }
+
+    .about-project__milestone_backend {
+        width: 140px;
+    }
+
+    .about-project__milestone-text {
+        font-weight: 400;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .about-project {
+        padding: 70px 14px;
+    }
+
+    .about-project__milestone_backend {
+        width: 100px;
+    }
+
+    .about-project__milestone-text {
+        font-size: 11px;
+    }
+
+    .about-project__milestone-bar {
+        font-size: 11px;
+    }
+}
+

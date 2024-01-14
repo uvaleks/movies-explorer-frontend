@@ -1,0 +1,25 @@
+@import url(./vendor/normalize.css);
+
+@import url(./vendor/fonts.css);
+
+@import url(./vendor/variables.css);
+
+@import url(./components/App/App.css);
+
+@import url(./components/Header/Header.css);
+
+@import url(./components/Main/Main.css);
+
+@import url(./components/Footer/Footer.css);
+
+body {
+  background-color: var(--black);
+  font-family: 'Inter', sans-serif;
+  color: var(--white);
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
