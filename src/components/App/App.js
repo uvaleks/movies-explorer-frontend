@@ -4,14 +4,34 @@ import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
 import Main from '../Main/Main';
 import './App.css';
+import { useState } from 'react';
 
-export default function App() {
+export default function App() {    
+    const [page, setPage] = useState('main');
+
+    function onMainClick() {
+        setPage('main');
+    }
+
+    function onMoviesClick() {
+        setPage('movies');
+    }
+
+    function onSavedMoviesClick() {
+        setPage('saved-movies');
+    }
+
     return (
         <div className='page'>
-            <Header/>
-            <Main/>
-            <Movies/>
-            <SavedMovies/>
+            <Header
+                isOnMain={(page === 'main') && true}
+                onMainClick={onMainClick}
+                onMoviesClick={onMoviesClick}
+                onSavedMoviesClick={onSavedMoviesClick}
+            />
+            {(page === 'main') && <Main/>}
+            {(page === 'movies') && <Movies/>}
+            {(page === 'saved-movies') && <SavedMovies/>}
             <Footer/>
         </div>     
   );

@@ -6,8 +6,11 @@
     width: 100%;
     padding: 0 70px;
     box-sizing: border-box;
+    background-color: var(--light);
+}
+
+.header_main {
     background-color: var(--light-violet);
-    transition: all .3s ease;
 }
 
 @media screen and (max-width: 768px) {
@@ -28,4 +31,5 @@
     object-position: left;
     max-height: 100%;
     box-sizing: contain-box;
+    cursor: pointer;
 }
