@@ -24,7 +24,7 @@ export default function App() {
     return (
         <div className='page'>
             <Header
-                isOnMain={(page === 'main') && true}
+                page={page}
                 onMainClick={onMainClick}
                 onMoviesClick={onMoviesClick}
                 onSavedMoviesClick={onSavedMoviesClick}

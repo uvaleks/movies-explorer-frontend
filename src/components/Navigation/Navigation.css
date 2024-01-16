@@ -116,7 +116,7 @@
     .navigation__bar {
         margin-top: 85px;
         flex-direction: column;
-        gap: 28px;
+        gap: 22px;
     }
 
     .navigation__link_main {
@@ -124,6 +124,7 @@
     }
 
     .navigation__link {
+        padding-bottom: 6px;
         line-height: auto;
         font-size: 18px;
     }
@@ -149,6 +150,11 @@
         background-repeat: no-repeat;
         height: 74px;
         align-self: normal;
+        cursor: pointer;
+    }
+
+    .navigation__burger:hover {
+        opacity: .7;
     }
 
     .navigation__button_profile {
@@ -165,11 +171,14 @@
     }
 
     .navigation__wrapper_hidden {
+        height: 74px;
         background-color: transparent;
     }
 
     .navigation__wrapper_hidden > .navigation {
+        height: 74px;
         background-color: transparent;
+        padding: 0;
     }
 
     .navigation__wrapper_hidden > .navigation > .navigation__bar {
