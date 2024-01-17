@@ -3,6 +3,7 @@ import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
 import Main from '../Main/Main';
+import Login from '../Login/Login'
 import './App.css';
 import { useState } from 'react';
 
@@ -23,16 +24,44 @@ export default function App() {
 
     return (
         <div className='page'>
-            <Header
-                page={page}
-                onMainClick={onMainClick}
-                onMoviesClick={onMoviesClick}
-                onSavedMoviesClick={onSavedMoviesClick}
-            />
-            {(page === 'main') && <Main/>}
-            {(page === 'movies') && <Movies/>}
-            {(page === 'saved-movies') && <SavedMovies/>}
-            <Footer/>
+            <Login/>
+            {(page === 'main') &&
+                <>
+                <Header
+                    page={page}
+                    onMainClick={onMainClick}
+                    onMoviesClick={onMoviesClick}
+                    onSavedMoviesClick={onSavedMoviesClick}
+                />
+                <Main/>
+                <Footer/>
+                </>
+            }
+            {(page === 'movies') &&
+                <>
+                <Header
+                    page={page}
+                    onMainClick={onMainClick}
+                    onMoviesClick={onMoviesClick}
+                    onSavedMoviesClick={onSavedMoviesClick}
+                />
+                <Movies/>
+                <Footer/>
+                </>
+            }
+            {(page === 'saved-movies') &&
+                <>
+                <Header
+                    page={page}
+                    onMainClick={onMainClick}
+                    onMoviesClick={onMoviesClick}
+                    onSavedMoviesClick={onSavedMoviesClick}
+                />
+                <SavedMovies/>
+                <Movies/>
+                <Footer/>
+                </>
+            }
         </div>     
   );
 }

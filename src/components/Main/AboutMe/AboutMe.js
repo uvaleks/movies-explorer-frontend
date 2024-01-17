@@ -13,7 +13,7 @@ export default function AboutMe() {
                     <p className="about-me__bio">Я родился в небольшом городке под Минском в Беларуси. Рос и учился уже в России, в литературной столице — городе Орле. С 2011 года работаю в Москве аналитиком информационной безопасности. Увлекаюсь дизайном, архитектурой, люблю бег и много путешествую по России. С 2021 года погрузился в веб-разработку</p>
                     <a className="about-me__link" href="https://github.com/uvaleks" target="_blank" rel="noreferrer">Github</a>
                 </div>
-                <img className="about-me__profile-pic" src={profilePic} alt="Profile"/>
+                <img className="about-me__profile-pic" src={profilePic} alt="Profile Pic"/>
             </div>
         </section>
   );

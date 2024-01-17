@@ -1,0 +1,8 @@
+.logo {
+    max-width: 38px;
+    object-fit: contain;
+    object-position: left;
+    max-height: 100%;
+    box-sizing: contain-box;
+    cursor: pointer;
+}

@@ -8,7 +8,7 @@ export default function Movies() {
     return (
         <section className='movies'>
           <SearchForm/>
-          {/* <Preloader/> */}
+          <Preloader/>
           <MoviesCardList>
             <MoviesCard isInSearchResults={true} isSaved={false}/>
             <MoviesCard isInSearchResults={true} isSaved={true}/>
