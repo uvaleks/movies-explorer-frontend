@@ -3,12 +3,21 @@ import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
 import Main from '../Main/Main';
-import Login from '../Login/Login'
+import Login from '../Login/Login';
+import Register from '../Register/Register';
 import './App.css';
 import { useState } from 'react';
 
 export default function App() {    
-    const [page, setPage] = useState('main');
+    const [page, setPage] = useState('');
+
+    function onLoginClick() {
+        setPage('login');
+    }
+
+    function onRegisterClick() {
+        setPage('register');
+    }
 
     function onMainClick() {
         setPage('main');
@@ -24,7 +33,17 @@ export default function App() {
 
     return (
         <div className='page'>
-            <Login/>
+            {(page === 'register') &&
+                <Register
+                    onLoginClick={onLoginClick}
+                />
+            }
+            {(page === '' || page === 'login') &&
+                <Login
+                    onRegisterClick={onRegisterClick}
+                    onMainClick={onMainClick}
+                />
+            }
             {(page === 'main') &&
                 <>
                 <Header
