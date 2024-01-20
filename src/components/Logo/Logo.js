@@ -1,8 +1,8 @@
 import './Logo.css';
 import logo from '../../images/logo.svg';
 
-export default function Logo() {
+export default function Logo({ onMainClick }) {
     return (
-        <img className="logo" src={logo} alt="Movies Exlplorer Logo"/>    
+        <img onClick={onMainClick} className="logo" src={logo} title="На главную" alt="Movies Exlplorer Logo"/>    
   );
 }
