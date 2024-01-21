@@ -1,7 +1,14 @@
+import { Link, useNavigate} from 'react-router-dom';
 import './Register.css';
 import Logo from '../Logo/Logo';
 
-export default function Register({onLoginClick}) {
+export default function Register() {
+    const navigate = useNavigate();
+
+    function onLoginClick() {
+        navigate('/signin');
+    }
+
     return (
         <div className="register">
             <div className="register__container">
@@ -41,7 +48,7 @@ export default function Register({onLoginClick}) {
                 </form>
                 <div className="register__hint-container">
                     <p className="register__hint">Уже зарегистрированы?</p>
-                    <p onClick={onLoginClick} className="register__link">Войти</p>
+                    <Link to='/signin' className="register__link">Войти</Link>
                 </div>
             </div>
         </div>

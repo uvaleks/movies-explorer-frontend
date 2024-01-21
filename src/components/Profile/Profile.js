@@ -1,6 +1,14 @@
+import { useNavigate } from "react-router-dom";
 import './Profile.css';
 
-export default function Profile({ onMainClick, setAuthorized }) {
+export default function Profile({ setAuthorized }) {
+    const navigate = useNavigate();
+
+    function onSignout() {
+        navigate('/');
+        setAuthorized(false);
+    }
+
     return (
         <div className="profile">
             <form className="profile__form"> 
@@ -26,7 +34,7 @@ export default function Profile({ onMainClick, setAuthorized }) {
                         />
                     </div>
                     <button className="profile__submit-button profile__submit-button_edit" type="submit">Редактировать</button>
-                    <button onClick={ () => { onMainClick(); setAuthorized(false) } } className="profile__submit-button profile__submit-button_quit" type="submit">Выйти из аккаунта</button>
+                    <button onClick={onSignout} className="profile__submit-button profile__submit-button_quit" type="submit">Выйти из аккаунта</button>
             </form>
         </div>
   );

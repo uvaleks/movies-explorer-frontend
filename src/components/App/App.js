@@ -1,3 +1,5 @@
+import { Routes, Route } from 'react-router-dom';
+import { useState } from 'react';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
@@ -6,115 +8,69 @@ import Main from '../Main/Main';
 import Login from '../Login/Login';
 import Register from '../Register/Register';
 import Profile from '../Profile/Profile';
+import NotFound from '../NotFound/NotFound';
 import './App.css';
-import { useState } from 'react';
 
 export default function App() {    
-    const [page, setPage] = useState('');
-    const [isAuthorized, setAuthorized] = useState(false);
-
-    function onProfileClick() {
-        setPage('profile');
-    }
-
-    function onLoginClick() {
-        setPage('login');
-    }
-
-    function onRegisterClick() {
-        setPage('register');
-    }
-
-    function onMainClick() {
-        setPage('main');
-    }
-
-    function onMoviesClick() {
-        setPage('movies');
-    }
-
-    function onSavedMoviesClick() {
-        setPage('saved-movies');
-    }
+    const [isAuthorized, setAuthorized] = useState(true);
 
     return (
         <div className='page'>
-            {(page === 'register') &&
-                <Register
-                    onLoginClick={onLoginClick}
-                />
-            }
-            {(page === '' || page === 'login') &&
-                <Login
-                    onRegisterClick={onRegisterClick}
-                    onMainClick={onMainClick}
-                    setAuthorized={setAuthorized}
-                />
-            }
-            {(page === 'profile') &&
-                <>
-                <Header
-                    page={page}
-                    isAuthorized={isAuthorized}
-                    onMainClick={onMainClick}
-                    onMoviesClick={onMoviesClick}
-                    onSavedMoviesClick={onSavedMoviesClick}
-                />
-                <Profile
-                    onMainClick={onMainClick}
-                    setAuthorized={setAuthorized}
-                />
-                </>
-            }
-            {(page === 'main') &&
-                <>
-                <Header
-                    page={page}
-                    isAuthorized={isAuthorized}
-                    onLoginClick={onLoginClick}
-                    onRegisterClick={onRegisterClick}
-                    onProfileClick={onProfileClick}
-                    onMainClick={onMainClick}
-                    onMoviesClick={onMoviesClick}
-                    onSavedMoviesClick={onSavedMoviesClick}
-                />
-                <Main/>
-                <Footer/>
-                </>
-            }
-            {(page === 'movies') &&
-                <>
-                <Header
-                    page={page}
-                    isAuthorized={isAuthorized}
-                    onLoginClick={onLoginClick}
-                    onRegisterClick={onRegisterClick}
-                    onProfileClick={onProfileClick}
-                    onMainClick={onMainClick}
-                    onMoviesClick={onMoviesClick}
-                    onSavedMoviesClick={onSavedMoviesClick}
-                />
-                <Movies/>
-                <Footer/>
-                </>
-            }
-            {(page === 'saved-movies') &&
-                <>
-                <Header
-                    page={page}
-                    isAuthorized={isAuthorized}
-                    onLoginClick={onLoginClick}
-                    onRegisterClick={onRegisterClick}
-                    onProfileClick={onProfileClick}
-                    onMainClick={onMainClick}
-                    onMoviesClick={onMoviesClick}
-                    onSavedMoviesClick={onSavedMoviesClick}
-                />
-                <SavedMovies/>
-                <Movies/>
-                <Footer/>
-                </>
-            }
+            <Routes>
+                <Route path="*" element={
+                    <NotFound/>
+                } />
+                <Route path="/" element={
+                    <>
+                    <Header
+                        isOnMain={true}
+                        isAuthorized={isAuthorized}
+                    />
+                    <Main/>
+                    <Footer/>
+                    </>
+                } />
+                <Route path="/movies" element={
+                    <>
+                    <Header
+                        isOnMain={false}
+                        isAuthorized={isAuthorized}
+                    />
+                    <Movies/>
+                    <Footer/>
+                    </>
+                } />
+                <Route path="/saved-movies" element={
+                    <>
+                    <Header
+                        isOnMain={false}
+                        isAuthorized={isAuthorized}
+                    />
+                    <SavedMovies/>
+                    <Movies/>
+                    <Footer/>
+                    </>
+                } />
+                <Route path="/profile" element={
+                    <>
+                    <Header
+                        isOnMain={false}
+                        isAuthorized={isAuthorized}
+                    />
+                    <Profile
+                        setAuthorized={setAuthorized}
+                    />
+                    </>
+                } />
+                <Route path="/signin" element={
+                    <Login
+                        setAuthorized={setAuthorized}
+                    />
+                } />
+                <Route path="/signup" element={
+                    <Register/>
+                } />
+            </Routes>
         </div>     
   );
 }

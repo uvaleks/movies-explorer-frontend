@@ -1,16 +1,10 @@
-import './Navigation.css';
 import { useState } from 'react';
-
+import { Link, NavLink } from 'react-router-dom';
+import './Navigation.css';
 
 export default function Navigation({
-        page,
-        isAuthorized,
-        onLoginClick,
-        onRegisterClick,
-        onProfileClick,
-        onMainClick,
-        onMoviesClick,
-        onSavedMoviesClick
+        isOnMain,
+        isAuthorized
     }) {
     
     const [isMobileMenuOpened, setMobileMenuOpened] = useState(false);
@@ -20,24 +14,24 @@ export default function Navigation({
     }
 
     return (
-        <nav onClick={onBurgerClick} className={"navigation" + (isAuthorized ? " navigation_mobile" + (!isMobileMenuOpened ? " navigation_mobile-menu-hidden" : "") : "") }>
+        <nav className={"navigation" + (isAuthorized ? " navigation_mobile" + (!isMobileMenuOpened ? " navigation_mobile-menu-hidden" : "") : "") }>
             <div className={"navigation__bar navigation__bar_unauthorized" + (isAuthorized ? " navigation__bar_hidden" : "")}>
-                <p onClick={onRegisterClick} className="navigation__link">Регистрация</p>
+                <a className="navigation__link" href="/signup">Регистрация</a>
                 <div className="navigation__button navigation__button_filled">
-                    <p onClick={onLoginClick} className="navigation__link navigation__link_inside-filled-button">Войти</p>
+                    <a className="navigation__link navigation__link_inside-filled-button" href="/signin">Войти</a>
                 </div>
             </div>
             {isAuthorized && <div className="navigation__container">
                 <div onClick={onBurgerClick} className={"navigation__burger" + (!isMobileMenuOpened ? "" : " navigation__burger_close")}></div>
                 <div className="navigation__bar navigation__bar_authorized">
-                    <p onClick={onMainClick} className={"navigation__link navigation__link_main" + ((page === 'main') ? " navigation__link_current" : "")}>Главная</p>
-                    <p onClick={onMoviesClick} className={"navigation__link" + ((page === 'movies') ? " navigation__link_current" : "")}>Фильмы</p>
-                    <p onClick={onSavedMoviesClick} className={"navigation__link" + ((page === 'saved-movies') ? " navigation__link_current" : "")}>Сохранённые фильмы</p>
+                    <NavLink to="/" className={({isActive}) => `navigation__link navigation__link_main ${isActive ? "navigation__link_current" : ""}`}>Главная</NavLink>
+                    <NavLink to="/movies" className={({isActive}) => `navigation__link ${isActive ? "navigation__link_current" : ""}`}>Фильмы</NavLink>
+                    <NavLink to="/saved-movies" className={({isActive}) => `navigation__link ${isActive ? "navigation__link_current" : ""}`}>Сохранённые фильмы</NavLink>
                 </div>
-                <div onClick={onProfileClick} className="navigation__button navigation__button_profile">
+                <Link to="/profile" className="navigation__button navigation__button_profile">
                     <p className="navigation__link">Аккаунт</p>
-                    <div className={"navigation__profile-icon" + ((page === 'main') ? "" : " navigation__profile-icon_light")} title="Профиль"></div>
-                </div>
+                    <div className={"navigation__profile-icon" + (isOnMain ? "" : " navigation__profile-icon_light")} title="Профиль"></div>
+                </Link>
             </div>}
         </nav>
     );
