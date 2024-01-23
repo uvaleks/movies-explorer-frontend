@@ -1,11 +1,10 @@
 import './AboutMe.css';
-import '../Main.css';
 import profilePic from '../../../images/profile-pic.png';
 
 export default function AboutMe() {
     return (
         <section className="about-me" id="about-me">
-            <h2 className="main__section-heading">Студент</h2>
+            <h2 className="about-me__section-heading">Студент</h2>
             <div className="about-me__profile-wrapper">
                 <div className="about-me__profile">
                     <h3 className="about-me__name">Алексей</h3>

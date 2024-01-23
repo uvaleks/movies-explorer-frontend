@@ -1,6 +1,6 @@
 .navtab {
     background-color: var(--dark);
-    height: 66px;
+    min-height: 66px;
     width: 100%;
     display: flex;
     justify-content: center;

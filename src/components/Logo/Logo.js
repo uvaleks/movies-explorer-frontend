@@ -4,8 +4,8 @@ import logo from '../../images/logo.svg';
 
 export default function Logo() {
     return (
-        <Link to='/'>
-            <img className="logo" src={logo} title="На главную" alt="Movies Exlplorer Logo"/>    
+        <Link to='/' className="logo" title="На главную">
+            <img className="logo__img" src={logo} alt="Movies Exlplorer Logo"/>    
         </Link>
   );
 }

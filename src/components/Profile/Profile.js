@@ -1,7 +1,37 @@
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from 'react';
 import './Profile.css';
 
 export default function Profile({ setAuthorized }) {
+    const [name, setName] = useState('Виталий');
+    const [email, setEmail] = useState('pochta@yandex.ru');
+
+    const [isButtonInEditState, setButtonInEditState] = useState(true);
+    const [isSubmitButtonDisabled, setSubmitButtonDisabled] = useState(false);
+
+
+    const handleNameChange = (e) => {
+        setName(e.target.value);
+    };
+
+    const handleEmailChange = (e) => {
+        setEmail(e.target.value);
+    };
+    
+    useEffect(() => {
+        if (email === '' || name === '') {
+            setSubmitButtonDisabled(true);
+        } else {
+            setSubmitButtonDisabled(false);
+        }
+    }, [name, email]);
+    
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setButtonInEditState(!isButtonInEditState)
+    }
+
     const navigate = useNavigate();
 
     function onSignout() {
@@ -16,9 +46,8 @@ export default function Profile({ setAuthorized }) {
                     <div className="profile__input-container">Имя
                         <input
                             className="profile__input"
-                            value="Виталий"
-                            id="name"
-                            name="name"
+                            value={name}
+                            onChange={handleNameChange}
                             type="text"
                             required
                         />
@@ -26,15 +55,22 @@ export default function Profile({ setAuthorized }) {
                     <div className="profile__input-container">E-mail
                         <input
                             className="profile__input"
-                            value="pochta@yandex.ru"
-                            id="name"
-                            name="name"
+                            value={email}
+                            onChange={handleEmailChange}
                             type="text"
                             required
                         />
                     </div>
-                    <button className="profile__submit-button profile__submit-button_edit" type="submit">Редактировать</button>
-                    <button onClick={onSignout} className="profile__submit-button profile__submit-button_quit" type="submit">Выйти из аккаунта</button>
+                    <p className="profile__error">{!isButtonInEditState ? "При обновлении профиля произошла ошибка." : ""}</p>
+                    <button 
+                        onClick={handleSubmit}
+                        className={(isButtonInEditState ? "profile__edit-button" : "profile__submit-button") + ((!isButtonInEditState && isSubmitButtonDisabled) ? " profile__submit-button_disabled" : "")}
+                        disabled={isSubmitButtonDisabled}
+                        type="submit"
+                    >{(isButtonInEditState ? "Редактировать" : "Сохранить")}</button>
+                    {isButtonInEditState && 
+                        <button onClick={onSignout} className="profile__quit-button" type="button">Выйти из аккаунта</button>
+                    }
             </form>
         </div>
   );

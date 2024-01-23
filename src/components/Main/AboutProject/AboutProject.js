@@ -1,10 +1,9 @@
 import './AboutProject.css';
-import '../Main.css';
 
 export default function AboutProject() {
     return (
         <section className="about-project" id="about-project">
-            <h2 className="main__section-heading">О проекте</h2>
+            <h2 className="about-project__section-heading">О проекте</h2>
             <div className="about-project__facts">
                 <div className="about-project__fact">
                     <h3 className="about-project__fact-heading">Дипломный проект включал 5 этапов</h3>

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
+import More from '../More/More';
 import SavedMovies from '../SavedMovies/SavedMovies';
 import Main from '../Main/Main';
 import Login from '../Login/Login';
@@ -36,7 +37,10 @@ export default function App() {
                         isOnMain={false}
                         isAuthorized={isAuthorized}
                     />
-                    <Movies/>
+                    <main>
+                        <Movies/>
+                        <More/>
+                    </main>
                     <Footer/>
                     </>
                 } />
@@ -46,8 +50,10 @@ export default function App() {
                         isOnMain={false}
                         isAuthorized={isAuthorized}
                     />
-                    <SavedMovies/>
-                    <Movies/>
+                    <main>
+                        <SavedMovies/>
+                        <Movies/>
+                    </main>
                     <Footer/>
                     </>
                 } />

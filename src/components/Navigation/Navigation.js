@@ -24,7 +24,7 @@ export default function Navigation({
             {isAuthorized && <div className="navigation__container">
                 <div onClick={onBurgerClick} className={"navigation__burger" + (!isMobileMenuOpened ? "" : " navigation__burger_close")}></div>
                 <div className="navigation__bar navigation__bar_authorized">
-                    <NavLink to="/" className={({isActive}) => `navigation__link navigation__link_main ${isActive ? "navigation__link_current" : ""}`}>Главная</NavLink>
+                    <NavLink to="/" className={({isActive}) => `navigation__link navigation__link_main ${isActive ? "navigation__link_current" : ""}`} tabindex="0">Главная</NavLink>
                     <NavLink to="/movies" className={({isActive}) => `navigation__link ${isActive ? "navigation__link_current" : ""}`}>Фильмы</NavLink>
                     <NavLink to="/saved-movies" className={({isActive}) => `navigation__link ${isActive ? "navigation__link_current" : ""}`}>Сохранённые фильмы</NavLink>
                 </div>

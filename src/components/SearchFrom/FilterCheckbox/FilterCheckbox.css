@@ -8,7 +8,7 @@
     display: flex;
     justify-content: end;
     align-items: center;
-    height: 40px;
+    min-height: 40px;
     width: 196px;
     border-left: 1px var(--dark5) solid;
     color: var(--dark);
@@ -21,7 +21,7 @@
     margin-left: auto;
 }
 
-.filter-checkbox__label_on {
+.filter-checkbox__label_checked {
     background-image: url(../../../images/checkbox-on.svg);
 }
 

@@ -35,7 +35,7 @@ export default function Login({ setAuthorized }) {
                         required
                     />
                     <span className="login__input-error"></span>
-                    <p className="login__error">При обновлении профиля произошла ошибка.</p>
+                    <p className="login__error">Вы ввели неправильный логин или пароль.</p>
                     <button onClick={onLoginClick} className="login__submit-button" type="submit">Войти</button>
                 </form>
                 <div className="login__hint-container">

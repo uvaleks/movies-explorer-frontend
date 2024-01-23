@@ -6,6 +6,18 @@
     box-sizing: border-box;
 }
 
+.about-me__section-heading {
+    width: 100%;
+    color: var(--dark);
+    margin: 0;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.88px;
+    padding-bottom: 23px;
+    border-bottom: 1px var(--dark) solid;
+}
+
 .about-me__profile-wrapper {
     padding: 66px 0 0;
     display: flex;

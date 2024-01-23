@@ -5,7 +5,19 @@
     width: 100%;
     padding: 100px 70px;
     box-sizing: border-box;
-    background-color: var(--light4);
+    background-color: var(--light5);
+}
+
+.techs__section-heading {
+    width: 100%;
+    color: var(--dark);
+    margin: 0;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.88px;
+    padding-bottom: 23px;
+    border-bottom: 1px var(--dark) solid;
 }
 
 .techs__title {

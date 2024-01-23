@@ -68,7 +68,7 @@
     font-weight: 400;
     line-height: normal;
     box-sizing: border-box;
-    height: 20px;
+    min-height: 20px;
     display: flex;
     align-items: center;
 }
