@@ -149,6 +149,7 @@
     }
 
     .navigation__burger {
+        border: none;
         background-image: url(../../images/burger.svg);
         background-size: 30px;
         background-color: transparent;

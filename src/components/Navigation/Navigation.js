@@ -13,6 +13,10 @@ export default function Navigation({
         setMobileMenuOpened(!isMobileMenuOpened);
     }
 
+    function onMenuLinkClick() {
+        setMobileMenuOpened(false);
+    }
+
     return (
         <nav className={"navigation" + (isAuthorized ? " navigation_mobile" + (!isMobileMenuOpened ? " navigation_mobile-menu-hidden" : "") : "") }>
             <div className={"navigation__bar navigation__bar_unauthorized" + (isAuthorized ? " navigation__bar_hidden" : "")}>
@@ -22,13 +26,13 @@ export default function Navigation({
                 </div>
             </div>
             {isAuthorized && <div className="navigation__container">
-                <div onClick={onBurgerClick} className={"navigation__burger" + (!isMobileMenuOpened ? "" : " navigation__burger_close")}></div>
+                <button onClick={onBurgerClick} className={"navigation__burger" + (!isMobileMenuOpened ? "" : " navigation__burger_close")}></button>
                 <div className="navigation__bar navigation__bar_authorized">
-                    <NavLink to="/" className={({isActive}) => `navigation__link navigation__link_main ${isActive ? "navigation__link_current" : ""}`} tabindex="0">Главная</NavLink>
-                    <NavLink to="/movies" className={({isActive}) => `navigation__link ${isActive ? "navigation__link_current" : ""}`}>Фильмы</NavLink>
-                    <NavLink to="/saved-movies" className={({isActive}) => `navigation__link ${isActive ? "navigation__link_current" : ""}`}>Сохранённые фильмы</NavLink>
+                    <NavLink onClick={onMenuLinkClick} to="/" className={({isActive}) => `navigation__link navigation__link_main ${isActive ? "navigation__link_current" : ""}`}>Главная</NavLink>
+                    <NavLink onClick={onMenuLinkClick} to="/movies" className={({isActive}) => `navigation__link ${isActive ? "navigation__link_current" : ""}`}>Фильмы</NavLink>
+                    <NavLink onClick={onMenuLinkClick} to="/saved-movies" className={({isActive}) => `navigation__link ${isActive ? "navigation__link_current" : ""}`}>Сохранённые фильмы</NavLink>
                 </div>
-                <Link to="/profile" className="navigation__button navigation__button_profile">
+                <Link onClick={onMenuLinkClick} to="/profile" className="navigation__button navigation__button_profile">
                     <p className="navigation__link">Аккаунт</p>
                     <div className={"navigation__profile-icon" + (isOnMain ? "" : " navigation__profile-icon_light")} title="Профиль"></div>
                 </Link>

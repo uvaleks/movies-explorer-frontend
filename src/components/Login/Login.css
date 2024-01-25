@@ -54,9 +54,17 @@
     margin: 0;
 }
 
+.login__input::placeholder {
+    color: var(--dark4);
+  }
+
+.login__input:invalid {
+    color: var(--red);
+}
+
 .login__input-error {
     color: var(--red);
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 400;
     line-height: normal;
     box-sizing: border-box;
@@ -65,13 +73,22 @@
     align-items: center;
 }
 
+.login__input-error:last-of-type {
+    padding-top: 10px;
+}
+
 .login__error {
+    visibility: hidden;
     color: var(--red);
     text-align: center;
     font-size: 11px;
     font-weight: 400;
     line-height: normal;
     margin: auto 0 20px;
+}
+
+.login__error_visible {
+    visibility: visible;
 }
 
 .login__submit-button {
@@ -92,6 +109,16 @@
 
 .login__submit-button:hover {
     opacity: .8;
+}
+
+.login__submit-button_disabled {
+    background-color: var(--light4);
+    color: var(--dark7);
+    cursor: not-allowed;
+}
+
+.login__submit-button_disabled:hover {
+    opacity: 1;
 }
 
 .login__hint-container {
