@@ -7,6 +7,7 @@
     padding: 0 70px;
     box-sizing: border-box;
     background-color: var(--light);
+    z-index: 2;
 }
 
 .header_main {
@@ -16,7 +17,11 @@
 @media screen and (max-width: 768px) {
     .header {
         padding: 0 30px;
-    }   
+    }  
+    
+    .header_fixed {
+        position: fixed;
+    }
 }
 
 @media screen and (max-width: 425px) {

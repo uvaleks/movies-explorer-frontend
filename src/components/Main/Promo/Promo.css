@@ -8,6 +8,7 @@
     align-items: center;
     background-color: var(--light-violet);
     box-sizing: border-box;
+    position: relative;
 }
 
 .promo__hero-image {
@@ -25,6 +26,7 @@
     line-height: 58px;
     letter-spacing: -2px;
     max-width: 730px;
+    z-index: 1;
 }
 
 @media screen and (max-width: 768px) {

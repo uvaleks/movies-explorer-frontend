@@ -1,13 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import './Navigation.css';
 
 export default function Navigation({
-        isOnMain,
-        isAuthorized
-    }) {
+    setHeaderFixed,
+    isOnMain,
+    isAuthorized
+}) {
     
     const [isMobileMenuOpened, setMobileMenuOpened] = useState(false);
+
+    useEffect(() => {
+        if (isMobileMenuOpened) {
+            setHeaderFixed(true);
+        } else {
+            setHeaderFixed(false);
+        }
+    }, [isMobileMenuOpened]);
 
     function onBurgerClick() {
         setMobileMenuOpened(!isMobileMenuOpened);

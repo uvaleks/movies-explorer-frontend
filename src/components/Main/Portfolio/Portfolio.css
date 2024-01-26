@@ -33,9 +33,13 @@
     font-weight: 400;
     line-height: 50px;
     letter-spacing: -1.2px;
-    padding-bottom: 20px;
+    padding-bottom: 9px;
     border-bottom: 1px var(--light7) solid;
     text-decoration: none;
+}
+
+.portfolio__arrow {
+    line-height: 60px;
 }
 
 .portfolio__link:hover {
@@ -49,6 +53,7 @@
 
     .portfolio__link {
         font-size: 28px;
+        letter-spacing: -1.12px;
     }
 }
 
@@ -65,5 +70,10 @@
         font-size: 18px;
         line-height: 28px;
         letter-spacing: -0.72px;
+        padding-bottom: 19px;
+    }
+
+    .portfolio__arrow {
+        line-height: inherit;
     }
 }

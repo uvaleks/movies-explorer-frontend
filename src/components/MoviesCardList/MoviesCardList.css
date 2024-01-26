@@ -1,5 +1,5 @@
 .movies-card-list {
-    padding: 50px 70px 26px;
+    padding: 70px 70px 26px;
     display: grid;
     grid-template: repeat(4, 1fr) / repeat(3, 1fr);
     width: 100%;

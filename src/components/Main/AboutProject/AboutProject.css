@@ -20,14 +20,14 @@
 
 .about-project__facts {
     display: flex;
-    gap: 30px;
-    padding: 70px 0 93px;
+    gap: 40px;
+    padding: 70px 0 110px;
 }
 
 .about-project__fact {
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    gap: 26px;
 }
 
 .about-project__fact-heading {
@@ -43,7 +43,7 @@
     color: var(--dark);
     font-size: 12px;
     font-weight: 400;
-    line-height: 18px;
+    line-height: 20px;
     margin: 0;
 }
 
@@ -62,7 +62,7 @@
 }
 
 .about-project__milestone_frontend {
-    width: 100%;
+    width: calc(100% - 228px);
 }
 
 .about-project__milestone-bar {
@@ -76,6 +76,7 @@
 }
 
 .about-project__milestone-bar_backend {
+    width: 100%;
     background-color: var(--dark);
     color: var(--light);
 }
@@ -100,8 +101,25 @@
         padding: 90px 50px;
     }
 
+    .about-project__facts {
+        padding: 70px 0 93px;
+        gap: 30px;
+    }
+    
+    .about-project__fact {
+        gap: 22px;
+    }
+
+    .about-project__fact-text {
+        line-height: 18px;
+    }
+
     .about-project__milestone_backend {
         width: 140px;
+    }
+
+    .about-project__milestone_frontend {
+        width: calc(100% - 140px);
     }
 
     .about-project__milestone-text {
@@ -116,6 +134,10 @@
 
     .about-project__milestone_backend {
         width: 100px;
+    }
+
+    .about-project__milestone_frontend {
+        width: calc(100% - 100px);
     }
 
     .about-project__milestone-text {

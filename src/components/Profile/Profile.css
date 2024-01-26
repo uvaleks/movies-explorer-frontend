@@ -6,7 +6,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
 }
 
 .profile__form {
@@ -18,7 +17,7 @@
 
 .profile__greeting {
     margin: 0;
-    padding-bottom: 123px;
+    padding: 74px 0 123px;
     color: var(--dark);
     font-size: 24px;
     font-weight: 500;
@@ -151,6 +150,7 @@
 @media screen and (max-width: 768px) {
     .profile {
         min-height: 505px;
+        justify-content: center;
     }
 
     .profile__form {
@@ -158,17 +158,18 @@
     }
 
     .profile__greeting {
-        padding-bottom: 96px;
+        padding: 0 0 96px;
     }
 }
 
 @media screen and (max-width: 425px) {
     .profile {
         padding: 0;
+        justify-content: unset;
     }
 
     .profile__greeting {
-        padding-bottom: 80px;
+        padding: 0 0 80px;
     }
 
     .profile__form {
