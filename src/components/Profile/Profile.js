@@ -1,15 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import React from 'react'; 
 import { useState, useEffect } from 'react';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import './Profile.css';
 
-export default function Profile({ setAuthorized }) {
+export default function Profile({ handleUpdateUser, onSignOut }) {
+    const currentUser = React.useContext(CurrentUserContext);
     const nameRef = React.createRef();
     const emailRef = React.createRef();
 
     const [inputFields, setInputFields] = useState({
-        name: 'Виталий',
-        email: 'pochta@yandex.ru'
+        name: currentUser.name,
+        email: currentUser.email,
       });
       
 
@@ -43,15 +45,11 @@ export default function Profile({ setAuthorized }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        handleUpdateUser(inputFields);
         setButtonInEditState(!isButtonInEditState)
     }
 
     const navigate = useNavigate();
-
-    function onSignout() {
-        navigate('/');
-        setAuthorized(false);
-    }
 
     useEffect(() => {
         if (nameRef.current.validity.valid && emailRef.current.validity.valid) {
@@ -70,7 +68,7 @@ export default function Profile({ setAuthorized }) {
     return (
         <div className="profile">
             <form className="profile__form"> 
-                    <h2 className="profile__greeting">Привет, Виталий!</h2>
+                    <h2 className="profile__greeting">{"Привет, " + currentUser.name + "!"}</h2>
                     <div className="profile__input-container">Имя
                         <input
                             onChange={handleChange}
@@ -109,7 +107,7 @@ export default function Profile({ setAuthorized }) {
                         type="submit"
                     >{(isButtonInEditState ? "Редактировать" : "Сохранить")}</button>
                     {isButtonInEditState && 
-                        <button onClick={onSignout} className="profile__quit-button" type="button">Выйти из аккаунта</button>
+                        <button onClick={onSignOut} className="profile__quit-button" type="button">Выйти из аккаунта</button>
                     }
             </form>
         </div>
