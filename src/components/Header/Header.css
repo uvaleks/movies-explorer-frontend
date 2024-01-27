@@ -1,0 +1,31 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 74px;
+    width: 100%;
+    padding: 0 70px;
+    box-sizing: border-box;
+    background-color: var(--light);
+    z-index: 2;
+}
+
+.header_main {
+    background-color: var(--light-violet);
+}
+
+@media screen and (max-width: 768px) {
+    .header {
+        padding: 0 30px;
+    }  
+    
+    .header_fixed {
+        position: fixed;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .header {
+        padding: 0 14px;
+    }   
+}

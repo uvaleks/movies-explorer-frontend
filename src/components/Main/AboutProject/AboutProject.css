@@ -1,0 +1,151 @@
+.about-project {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 110px 70px;
+    box-sizing: border-box;
+}
+
+.about-project__section-heading {
+    width: 100%;
+    color: var(--dark);
+    margin: 0;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.88px;
+    padding-bottom: 23px;
+    border-bottom: 1px var(--dark) solid;
+}
+
+.about-project__facts {
+    display: flex;
+    gap: 40px;
+    padding: 70px 0 110px;
+}
+
+.about-project__fact {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+}
+
+.about-project__fact-heading {
+    color: var(--dark);
+    font-size: 20px;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.8px;
+    margin: 0;
+}
+
+.about-project__fact-text {
+    color: var(--dark);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    margin: 0;
+}
+
+.about-project__timeline {
+    display: flex;
+}
+
+.about-project__milestone {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.about-project__milestone_backend {
+    width: 228px;
+}
+
+.about-project__milestone_frontend {
+    width: calc(100% - 228px);
+}
+
+.about-project__milestone-bar {
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.about-project__milestone-bar_backend {
+    width: 100%;
+    background-color: var(--dark);
+    color: var(--light);
+}
+
+.about-project__milestone-bar_frontend {
+    background-color: var(--light6);
+    color: var(--dark);
+}
+
+.about-project__milestone-text {
+    color: var(--dark4);
+    display: flex;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 17px;
+    margin: 0;
+}
+
+@media screen and (max-width: 768px) {
+    .about-project {
+        padding: 90px 50px;
+    }
+
+    .about-project__facts {
+        padding: 70px 0 93px;
+        gap: 30px;
+    }
+    
+    .about-project__fact {
+        gap: 22px;
+    }
+
+    .about-project__fact-text {
+        line-height: 18px;
+    }
+
+    .about-project__milestone_backend {
+        width: 140px;
+    }
+
+    .about-project__milestone_frontend {
+        width: calc(100% - 140px);
+    }
+
+    .about-project__milestone-text {
+        font-weight: 400;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .about-project {
+        padding: 70px 14px;
+    }
+
+    .about-project__milestone_backend {
+        width: 100px;
+    }
+
+    .about-project__milestone_frontend {
+        width: calc(100% - 100px);
+    }
+
+    .about-project__milestone-text {
+        font-size: 11px;
+    }
+
+    .about-project__milestone-bar {
+        font-size: 11px;
+    }
+}
+

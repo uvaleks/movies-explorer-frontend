@@ -1,0 +1,107 @@
+.movies-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+}
+
+.movies-card:hover > .movies-card__action-button_save {
+    display: flex;
+}
+
+.movies-card__poster {
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    width: 100%;
+    border-radius: 8px;
+}
+
+.movies-card__action-button {
+    top: 14px;
+    right: 14px;
+    position: absolute;
+    background-color: initial;
+    background-repeat: no-repeat;
+    border: none;
+    min-height: 21px;
+    cursor: pointer;
+}
+
+.movies-card__action-button_delete {
+    background-image: url(../../images/remove.svg);
+    width: 21px;
+}
+
+.movies-card__action-button_save {
+    display: none;
+    background-color: var(--light3);
+    align-items: center;
+    padding: 6px 7px;
+    box-sizing: border-box;
+    border-radius: 30px;
+    color: var(--dark);
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 9px;
+}
+
+.movies-card__action-button_unsave {
+    background-image: url(../../images/saved.svg);
+    width: 21px;
+}
+
+.movies-card__action-button:hover {
+    opacity: .8;
+}
+
+.movies-card__bar {
+    display: flex;
+    justify-content: space-between;
+}
+
+.movies-card__title {
+    color: var(--dark);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: normal;
+    margin: 0;
+}
+
+.movies-card__duration {
+    border-radius: 3px;
+    background-color: var(--light3);
+    color: var(--dark4);
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 10px;
+    min-height: 18px;
+    margin: 0;
+    min-height: 18px;
+    display: flex;
+    align-items: center;
+    padding: 3px 4px;
+    box-sizing: border-box;
+}
+
+@media screen and (max-width: 768px) {
+    .movies-card {
+        gap: 25px;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .movies-card {
+        gap: 16px;
+    }
+
+    .movies-card__action-button_save {
+        top: 10px;
+        right: 10px;
+    }
+
+    .movies-card__title {
+        font-size: 12px;
+    }
+}

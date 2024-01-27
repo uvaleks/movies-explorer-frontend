@@ -1,0 +1,46 @@
+.promo {
+    padding: 0 36px;
+    display: flex;
+    width: 100%;
+    height: calc(100vh - 66px - 74px);
+    min-height: 360px;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--light-violet);
+    box-sizing: border-box;
+    position: relative;
+}
+
+.promo__hero-image {
+    max-width: 320px;
+    min-width: 248px;
+}
+
+.promo__title {
+    position: absolute;
+    margin: 0;
+    color: var(--dark);
+    text-align: center;
+    font-size: 50px;
+    font-weight: 400;
+    line-height: 58px;
+    letter-spacing: -2px;
+    max-width: 730px;
+    z-index: 1;
+}
+
+@media screen and (max-width: 768px) {
+    .promo__title {
+        width: 100%;
+        padding: 0 20px;
+        box-sizing: border-box;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .promo__title {
+        font-size: 31px;
+        line-height: 39px;
+        letter-spacing: -1.24px;
+    }
+}
