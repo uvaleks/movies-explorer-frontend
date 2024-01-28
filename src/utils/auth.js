@@ -19,7 +19,6 @@ export const register = (inputFields) => {
 };
 
 export const authorize = (inputFields) => {
-  console.log(inputFields);
   return fetch(`${BASE_URL}/signin`, {
     method: 'POST',
     credentials: 'include',
@@ -31,13 +30,17 @@ export const authorize = (inputFields) => {
   .then(_checkResponse)
 };
 
-export const getContent = (token) => {
-  return fetch(`${BASE_URL}/users/me`, {
-    method: 'GET',
+export const signout = () => {
+  return fetch(`${BASE_URL}/signout`, {
+    method: 'POST',
     credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-    }
+  })
+  .then(_checkResponse)
+};
+
+export const getUserInfo = () => {
+  return fetch(`${BASE_URL}/users/me`, {
+    credentials: 'include',
   })
   .then(_checkResponse)
 }

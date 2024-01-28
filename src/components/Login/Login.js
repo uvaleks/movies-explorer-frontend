@@ -24,7 +24,6 @@ export default function Login({ onLogin, setAuthorized }) {
 
     const handleSubmit = async (e) => {
       e.preventDefault();
-      console.log(inputFields);
       onLogin(inputFields)
         .then(() => {
             resetForm();

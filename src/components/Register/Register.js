@@ -31,9 +31,8 @@ export default function Register({ onRegister }) {
         onRegister(inputFields)
           .then((res) => {
             if (res) {
-                console.log(res);
                 resetForm();
-                navigate('/');
+                navigate('/signin');
             }
           })
     };

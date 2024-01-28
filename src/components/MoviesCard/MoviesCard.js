@@ -1,10 +1,9 @@
 import './MoviesCard.css';
-import posterImage from '../../images/poster.png';
 
-export default function MoviesCard({ isSaved, isInSearchResults }) {
+export default function MoviesCard({ isInSearchResults, isSaved, title, duration, poster, id }) {
     return (
         <article className="movies-card">
-            <img className="movies-card__poster" src={posterImage} alt='Постер фильма'/>
+            <img className="movies-card__poster" src={'https://api.nomoreparties.co/' + poster} alt={title}/>
             {(isInSearchResults && isSaved)
             ? <button className="movies-card__action-button movies-card__action-button_unsave" type="button" aria-label="Сохранено"></button>
             : ( isInSearchResults
@@ -12,8 +11,8 @@ export default function MoviesCard({ isSaved, isInSearchResults }) {
                 : <button className="movies-card__action-button movies-card__action-button_delete" type="button" aria-label="Удалить"></button>)
             }
             <div className="movies-card__bar">
-                <h2 className="movies-card__title">33 слова о дизайне</h2>
-                <p className="movies-card__duration">1ч 17м</p>
+                <h2 className="movies-card__title">{title}</h2>
+                <p className="movies-card__duration">{duration}</p>
             </div>
         </article>
   );

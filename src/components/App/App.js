@@ -1,8 +1,10 @@
 import * as auth from '../../utils/auth';
-import api from '../../utils/api';
+import MainApi from '../../utils/MainApi';
+import MoviesApi from '../../utils/MoviesApi';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
+import { MoviesContext } from '../../contexts/MoviesContext';
 import ProtectedRoute from '../ProtectedRoute';
 import { withRouter } from '../withRouter'
 import Header from '../Header/Header';
@@ -19,30 +21,45 @@ import './App.css';
 
 function App() {    
     const [currentUser, setCurrentUser] = useState({});
+    const [movies, setMovies] = useState([]);
     const navigate = useNavigate();
-    const [isAuthorized, setAuthorized] = useState(true);
+    const [isLoggedIn, setLoggedIn] = useState(false);
+    const [isAuthorized, setAuthorized] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-
-    useEffect(() => {
-        if (isAuthorized) {
-          api.getUserInfo()
-            .then((userObject) => {
-                console.log(userObject);
-              setCurrentUser(userObject);
-            })
-            .catch(console.error);
-        }
-      }, [isAuthorized]);
 
     useEffect(() => {
         const loggedInUserId = localStorage.getItem('loggedInUserId');
         if (loggedInUserId) {
-            setAuthorized(true);
-            navigate('/movies');
+          setLoggedIn(true);
+          navigate('/movies');
         } else {
-            setAuthorized(false);
+          setLoggedIn(false);
         };
-    }, [isAuthorized]);
+      }, []);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            setTimeout(() => {
+                auth.getUserInfo()
+                .then((userObject) => {
+                    if (userObject) {
+                        setCurrentUser(userObject);
+                        setAuthorized(true);
+                        navigate('/movies');
+                    }
+                })
+                .catch(console.error)
+            }, 1000)
+            setTimeout(() => {
+                auth.getUserInfo()
+                MoviesApi.getMovies()
+                .then((res) => {
+                    setMovies(res);
+                })
+                .catch(err => console.log(err))
+            }, 2000)
+        }
+      }, [isLoggedIn]);
 
     const onRegister = (inputFields) => {
         return auth.register(inputFields)
@@ -63,7 +80,7 @@ function App() {
         .then((res) => {
             if (res.message === 'Всё верно!') {
                 localStorage.setItem('loggedInUserId', res._id);
-                setAuthorized(true);
+                setLoggedIn(true);
             }
         })
         .catch((err) => {
@@ -76,26 +93,29 @@ function App() {
     };
 
     const onSignOut = () => {
-        if (isAuthorized) {
-            localStorage.removeItem('loggedInUserId');
-            document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            setCurrentUser({});
-            setAuthorized(false);
-            navigate('/')
-            }
+        return auth.signout()
+        .then((res) => {
+            if (res.message === "Вы успешно вышли из системы") {
+                localStorage.removeItem('loggedInUserId');
+                setCurrentUser({});
+                setAuthorized(false);
+                setLoggedIn(false);
+                navigate('/')
+            }})
+        .catch(console.error);
     };
 
     function handleUpdateUser({name, email}) {
-          return api.patchUserInfo({ name, email }).then(setCurrentUser);
+          return MainApi.patchUserInfo({ name, email }).then(setCurrentUser);
     }
 
-    function SearchPage() {
+    function SearchMovies() {
         return (
             <>
                 <Header
                     isOnMain={false}
                     isAuthorized={isAuthorized}
-                />
+                    />
                 <main>
                     <Movies/>
                     <More/>
@@ -105,69 +125,89 @@ function App() {
       );
     }
 
+    function SavedMoviesPage() {
+        return (
+            <>
+                <Header
+                    isOnMain={false}
+                    isAuthorized={isAuthorized} 
+                    />
+                <main>
+                    <SavedMovies/>
+                </main>
+                <Footer/>
+            </>
+      );
+    }
+
+    function ProfilePage() {
+        return (
+            <>
+                <Header
+                    isOnMain={false}
+                    isAuthorized={isAuthorized}
+                />
+                <Profile
+                    handleUpdateUser={handleUpdateUser}
+                    onSignOut={onSignOut}
+                />
+            </>
+      );
+    }
+
+
     return (
         <CurrentUserContext.Provider value={currentUser}>
-            <div className='page'>
-                <Routes>
-                    <Route path="*" element={
-                        <NotFound/>
-                    } />
-                    <Route path="/" element={
-                        <>
-                        <Header
-                            isOnMain={true}
-                            isAuthorized={isAuthorized}
-                        />
-                        <Main/>
-                        <Footer/>
-                        </>
-                    } />
-                    <Route 
-                        path="/movies" 
-                        element={
+            <MoviesContext.Provider value={movies}>
+                <div className='page'>
+                    <Routes>
+                        <Route path="*" element={
+                            <NotFound/>
+                        } />
+                        <Route path="/" element={
+                            <>
+                            <Header
+                                isOnMain={true}
+                                isAuthorized={isAuthorized}
+                            />
+                            <Main/>
+                            <Footer/>
+                            </>
+                        } />
+                        <Route 
+                            path="/movies" 
+                            element={
+                                <ProtectedRoute
+                                    isAuthorized={isAuthorized}
+                                    component={SearchMovies}
+                                />
+                        } />
+                        <Route path="/saved-movies" element={
                             <ProtectedRoute
                                 isAuthorized={isAuthorized}
-                                component={SearchPage}
+                                component={SavedMoviesPage}
                             />
-                    } />
-                    <Route path="/saved-movies" element={
-                        <>
-                        <Header
-                            isOnMain={false}
-                            isAuthorized={isAuthorized}
-                        />
-                        <main>
-                            <SavedMovies/>
-                            <Movies/>
-                        </main>
-                        <Footer/>
-                        </>
-                    } />
-                    <Route path="/profile" element={
-                        <>
-                        <Header
-                            isOnMain={false}
-                            isAuthorized={isAuthorized}
-                        />
-                        <Profile
-                            handleUpdateUser={handleUpdateUser}
-                            onSignOut={onSignOut}
-                        />
-                        </>
-                    } />
-                    <Route path="/signin" element={
-                        <Login
-                            onLogin={onLogin}
-                            setAuthorized={setAuthorized}
-                        />
-                    } />
-                    <Route path="/signup" element={
-                        <Register
-                            onRegister={onRegister}
-                        />
-                    } />
-                </Routes>
-            </div>  
+                        } />
+                        <Route path="/profile" element={
+                            <ProtectedRoute
+                                isAuthorized={isAuthorized}
+                                component={ProfilePage}
+                            />
+                        } />
+                        <Route path="/signin" element={
+                            <Login
+                                onLogin={onLogin}
+                                setAuthorized={setAuthorized}
+                            />
+                        } />
+                        <Route path="/signup" element={
+                            <Register
+                                onRegister={onRegister}
+                            />
+                        } />
+                    </Routes>
+                </div>  
+            </MoviesContext.Provider>
         </CurrentUserContext.Provider>  
     );
 }

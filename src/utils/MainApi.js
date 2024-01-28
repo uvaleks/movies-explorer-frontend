@@ -99,8 +99,8 @@ class Api {
     }
 }
 
-const api = new Api({
+const MainApi = new Api({
     baseUrl: 'https://api.uvaleks.nomoredomainsmonster.ru',
   });
 
-export default api;
+export default MainApi;

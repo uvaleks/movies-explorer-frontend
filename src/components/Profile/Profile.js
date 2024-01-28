@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import React from 'react'; 
 import { useState, useEffect } from 'react';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
@@ -14,7 +13,6 @@ export default function Profile({ handleUpdateUser, onSignOut }) {
         email: currentUser.email,
       });
       
-
     const [isInputsReadOnly, setInputsReadOnly] = useState(true);
     const [isButtonInEditState, setButtonInEditState] = useState(true);
     const [isSubmitButtonDisabled, setSubmitButtonDisabled] = useState(false);
@@ -45,11 +43,13 @@ export default function Profile({ handleUpdateUser, onSignOut }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        handleUpdateUser(inputFields);
-        setButtonInEditState(!isButtonInEditState)
+        if (!isButtonInEditState) {
+            handleUpdateUser(inputFields);
+            setButtonInEditState(true)
+        } else {
+            setButtonInEditState(false)
+        }
     }
-
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (nameRef.current.validity.valid && emailRef.current.validity.valid) {
@@ -67,7 +67,10 @@ export default function Profile({ handleUpdateUser, onSignOut }) {
 
     return (
         <div className="profile">
-            <form className="profile__form"> 
+            <form 
+                className="profile__form"
+                onSubmit={handleSubmit}
+            > 
                     <h2 className="profile__greeting">{"Привет, " + currentUser.name + "!"}</h2>
                     <div className="profile__input-container">Имя
                         <input
@@ -100,8 +103,7 @@ export default function Profile({ handleUpdateUser, onSignOut }) {
                     </div>
                     <span className="profile__input-error">{errors.email}</span>
                     <p className="profile__error">При обновлении профиля произошла ошибка</p>
-                    <button 
-                        onClick={handleSubmit}
+                    <button
                         className={(isButtonInEditState ? "profile__edit-button" : "profile__submit-button") + ((!isButtonInEditState && isSubmitButtonDisabled) ? " profile__submit-button_disabled" : "")}
                         disabled={isSubmitButtonDisabled}
                         type="submit"
