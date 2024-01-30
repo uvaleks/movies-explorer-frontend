@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FilterCheckbox from './FilterCheckbox/FilterCheckbox';
 import './SearchForm.css';
 
-export default function SearchForm({ setQuery, isShorts, setShorts }) {
+export default function SearchForm({ setQuery, isShorts, setShorts, isSavedMoviesPage }) {
     const [searchInput, setSearchInput] = useState('');
 
     const handleSubmit = async (e) => {
@@ -12,8 +12,16 @@ export default function SearchForm({ setQuery, isShorts, setShorts }) {
 
     const handleChange = (e) => {
         setSearchInput(e.target.value);
-      };
+    };
 
+    useEffect(() => {
+        if (!isSavedMoviesPage) {
+            if (localStorage.getItem('query')) {
+                setSearchInput(localStorage.getItem('query'));
+            }
+        }
+    }, []);
+    
     return (
         <div className="search">
             <form 
@@ -28,7 +36,11 @@ export default function SearchForm({ setQuery, isShorts, setShorts }) {
                 ></input>
                 <button className="search__form-button" type="submit">Найти</button>
             </form>
-            <FilterCheckbox isShorts={isShorts} setShorts={setShorts}/>
+            <FilterCheckbox 
+                isShorts={isShorts}
+                setShorts={setShorts}
+                isSavedMoviesPage={isSavedMoviesPage}
+            />
         </div>
     )
 };

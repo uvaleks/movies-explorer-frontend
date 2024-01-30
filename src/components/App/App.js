@@ -5,6 +5,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import { MoviesContext } from '../../contexts/MoviesContext';
+import { SavedMoviesContext } from '../../contexts/SavedMoviesContext';
 import ProtectedRoute from '../ProtectedRoute';
 import { withRouter } from '../withRouter'
 import Header from '../Header/Header';
@@ -22,6 +23,7 @@ import './App.css';
 function App() {    
     const [currentUser, setCurrentUser] = useState({});
     const [movies, setMovies] = useState([]);
+    const [savedMovies, setSavedMovies] = useState([]);
     const navigate = useNavigate();
     const [isLoggedIn, setLoggedIn] = useState(false);
     const [isAuthorized, setAuthorized] = useState(false);
@@ -39,27 +41,55 @@ function App() {
 
     useEffect(() => {
         if (isLoggedIn) {
-            setTimeout(() => {
-                auth.getUserInfo()
-                .then((userObject) => {
-                    if (userObject) {
-                        setCurrentUser(userObject);
-                        setAuthorized(true);
-                        navigate('/movies');
-                    }
-                })
-                .catch(console.error)
-            }, 1000)
-            setTimeout(() => {
-                auth.getUserInfo()
-                MoviesApi.getMovies()
-                .then((res) => {
-                    setMovies(res);
-                })
-                .catch(err => console.log(err))
-            }, 2000)
+            auth.getUserInfo()
+            .then((userObject) => {
+                if (userObject) {
+                    setCurrentUser(userObject);
+                    setAuthorized(true);
+                    navigate('/movies');
+                }
+            })
+            .catch(console.error)
+
+            MoviesApi.getMovies()
+            .then((res) => {
+                setMovies(res);
+            })
+            .catch(err => console.log(err))
+
+            MainApi.getSavedMovies()
+            .then((res) => {
+                setSavedMovies(res);
+                console.log(res);
+            })
+            .catch(err => console.log(err))
         }
       }, [isLoggedIn]);
+
+    const saveMovie = (movie) => {
+        MainApi.postSavedMovie(movie)
+        .then((res) => {
+            if (res) {
+                MainApi.getSavedMovies()
+                .then((res) => {
+                    setSavedMovies(res);
+                    console.log(res);
+                })
+                .catch(err => console.log(err))
+            }
+        })
+        .catch(err => console.log(err))
+    }
+
+    const deleteMovie = (id) => {
+        MainApi.deleteMovie(id)
+        .then((res) => {
+            if (res.acknowledged) {
+                setSavedMovies(savedMovies.filter(savedMovie => savedMovie._id !== id));
+            }
+        })
+        .catch(err => console.log(err))
+    }
 
     const onRegister = (inputFields) => {
         return auth.register(inputFields)
@@ -109,6 +139,14 @@ function App() {
           return MainApi.patchUserInfo({ name, email }).then(setCurrentUser);
     }
 
+    const formatDuration = (durationInMinutes) => {
+        const hours = Math.floor(durationInMinutes / 60);
+        const minutes = durationInMinutes % 60;
+        const formattedDuration = (hours && hours + "ч ") + minutes + "м";
+    
+        return formattedDuration; 
+    }
+
     function SearchMovies() {
         return (
             <>
@@ -117,7 +155,10 @@ function App() {
                     isAuthorized={isAuthorized}
                     />
                 <main>
-                    <Movies/>
+                    <Movies
+                        saveMovie={saveMovie}
+                        formatDuration={formatDuration}
+                    />
                     <More/>
                 </main>
                 <Footer/>
@@ -133,7 +174,10 @@ function App() {
                     isAuthorized={isAuthorized} 
                     />
                 <main>
-                    <SavedMovies/>
+                    <SavedMovies
+                        formatDuration={formatDuration}
+                        onDelete={deleteMovie}
+                    />
                 </main>
                 <Footer/>
             </>
@@ -159,54 +203,56 @@ function App() {
     return (
         <CurrentUserContext.Provider value={currentUser}>
             <MoviesContext.Provider value={movies}>
-                <div className='page'>
-                    <Routes>
-                        <Route path="*" element={
-                            <NotFound/>
-                        } />
-                        <Route path="/" element={
-                            <>
-                            <Header
-                                isOnMain={true}
-                                isAuthorized={isAuthorized}
-                            />
-                            <Main/>
-                            <Footer/>
-                            </>
-                        } />
-                        <Route 
-                            path="/movies" 
-                            element={
+                <SavedMoviesContext.Provider value={savedMovies}>
+                    <div className='page'>
+                        <Routes>
+                            <Route path="*" element={
+                                <NotFound/>
+                            } />
+                            <Route path="/" element={
+                                <>
+                                <Header
+                                    isOnMain={true}
+                                    isAuthorized={isAuthorized}
+                                />
+                                <Main/>
+                                <Footer/>
+                                </>
+                            } />
+                            <Route 
+                                path="/movies" 
+                                element={
+                                    <ProtectedRoute
+                                        isAuthorized={isAuthorized}
+                                        component={SearchMovies}
+                                    />
+                            } />
+                            <Route path="/saved-movies" element={
                                 <ProtectedRoute
                                     isAuthorized={isAuthorized}
-                                    component={SearchMovies}
+                                    component={SavedMoviesPage}
                                 />
-                        } />
-                        <Route path="/saved-movies" element={
-                            <ProtectedRoute
-                                isAuthorized={isAuthorized}
-                                component={SavedMoviesPage}
-                            />
-                        } />
-                        <Route path="/profile" element={
-                            <ProtectedRoute
-                                isAuthorized={isAuthorized}
-                                component={ProfilePage}
-                            />
-                        } />
-                        <Route path="/signin" element={
-                            <Login
-                                onLogin={onLogin}
-                                setAuthorized={setAuthorized}
-                            />
-                        } />
-                        <Route path="/signup" element={
-                            <Register
-                                onRegister={onRegister}
-                            />
-                        } />
-                    </Routes>
-                </div>  
+                            } />
+                            <Route path="/profile" element={
+                                <ProtectedRoute
+                                    isAuthorized={isAuthorized}
+                                    component={ProfilePage}
+                                />
+                            } />
+                            <Route path="/signin" element={
+                                <Login
+                                    onLogin={onLogin}
+                                    setAuthorized={setAuthorized}
+                                />
+                            } />
+                            <Route path="/signup" element={
+                                <Register
+                                    onRegister={onRegister}
+                                />
+                            } />
+                        </Routes>
+                    </div>  
+                </SavedMoviesContext.Provider>
             </MoviesContext.Provider>
         </CurrentUserContext.Provider>  
     );

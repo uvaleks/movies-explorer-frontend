@@ -16,24 +16,31 @@ class Api {
         .then(this._checkResponse)
     }
 
-    getCards() {
-        return this._request('/cards', {
+    getSavedMovies() {
+        return this._request('/movies', {
             credentials: 'include',
             headers: this._headers
         })
     }
 
-    postCard({name, link}) {
-        return this._request('/cards', {
+    postSavedMovie(movie) {
+        return this._request('/movies', {
             method: 'POST',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                name: name,
-                link: link
-            })
+            body: JSON.stringify(movie)
+        })
+    }
+
+    deleteMovie(id) {
+        return this._request(`/movies/${id}`, {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
         })
     }
 
@@ -68,16 +75,6 @@ class Api {
                 }
             })
         }
-    }
-
-    deleteCard(id) {
-        return this._request(`/cards/${id}`, {
-            method: 'DELETE',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
     }
 
     getUserInfo() {

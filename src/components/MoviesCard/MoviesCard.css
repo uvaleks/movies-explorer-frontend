@@ -70,13 +70,14 @@
 }
 
 .movies-card__duration {
+    white-space: nowrap;
     border-radius: 3px;
     background-color: var(--light3);
     color: var(--dark4);
     font-size: 11px;
     font-weight: 400;
     line-height: 10px;
-    min-height: 18px;
+    max-height: 18px;
     margin: 0;
     min-height: 18px;
     display: flex;

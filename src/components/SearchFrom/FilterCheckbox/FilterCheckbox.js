@@ -1,6 +1,21 @@
+import { useEffect } from 'react';
 import './FilterCheckbox.css';
 
-export default function FilterCheckbox({ isShorts, setShorts }) {
+export default function FilterCheckbox({ isShorts, setShorts, isSavedMoviesPage }) {
+
+  useEffect(() => {
+    if (!isSavedMoviesPage) {
+      if (localStorage.getItem('isShorts') !== undefined) {
+        setShorts((localStorage.getItem('isShorts') === "false") ? false : true);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isSavedMoviesPage) {
+      localStorage.setItem('isShorts', isShorts);
+    }
+  }, [isShorts]);
 
   return (
         <div className="filter-checkbox">
