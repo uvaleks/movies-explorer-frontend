@@ -1,31 +1,46 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './FilterCheckbox.css';
 
-export default function FilterCheckbox({ isShorts, setShorts, isSavedMoviesPage }) {
+export default function FilterCheckbox({ setShorts, isSavedMoviesPage }) {
+  const [shortsCheckbox, setShortsCheckbox] = useState(false);
+
+  const handleChange = () => {
+    setShortsCheckbox(!shortsCheckbox)
+  }
+
+  useEffect(() => {
+    setShorts(shortsCheckbox);
+  }, [shortsCheckbox]);
 
   useEffect(() => {
     if (!isSavedMoviesPage) {
-      if (localStorage.getItem('isShorts') !== undefined) {
-        setShorts((localStorage.getItem('isShorts') === "false") ? false : true);
+      if (localStorage.getItem('isShorts') !== null) {
+        setShortsCheckbox((localStorage.getItem('isShorts') === "false") ? false : true);
+      }
+    } else {
+      if (localStorage.getItem('isSavedMoviesShorts') !== null) {
+        setShortsCheckbox((localStorage.getItem('isSavedMoviesShorts') === "false") ? false : true);
       }
     }
   }, []);
 
   useEffect(() => {
     if (!isSavedMoviesPage) {
-      localStorage.setItem('isShorts', isShorts);
+      localStorage.setItem('isShorts', shortsCheckbox);
+    } else {
+      localStorage.setItem('isSavedMoviesShorts', shortsCheckbox);
     }
-  }, [isShorts]);
+  }, [shortsCheckbox]);
 
   return (
         <div className="filter-checkbox">
           <input
             className="filter-checkbox__input"
             type="checkbox"
-            onChange={() => setShorts(!isShorts)}
+            onChange={handleChange}
             id="shorts"
           />
-          <label className={"filter-checkbox__label" + (isShorts ? " filter-checkbox__label_checked" : " filter-checkbox__label_off")} htmlFor="shorts">Короткометражки</label>
+          <label className={"filter-checkbox__label" + (shortsCheckbox ? " filter-checkbox__label_checked" : " filter-checkbox__label_off")} htmlFor="shorts">Короткометражки</label>
         </div>
   );
 }

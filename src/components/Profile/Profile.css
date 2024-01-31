@@ -162,7 +162,7 @@
     }
 }
 
-@media screen and (max-width: 425px) {
+@media screen and (max-width: 480px) {
     .profile {
         padding: 0;
         justify-content: unset;

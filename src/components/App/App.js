@@ -11,7 +11,6 @@ import { withRouter } from '../withRouter'
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
-import More from '../More/More';
 import SavedMovies from '../SavedMovies/SavedMovies';
 import Main from '../Main/Main';
 import Login from '../Login/Login';
@@ -28,6 +27,7 @@ function App() {
     const [isLoggedIn, setLoggedIn] = useState(false);
     const [isAuthorized, setAuthorized] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const loggedInUserId = localStorage.getItem('loggedInUserId');
@@ -56,11 +56,11 @@ function App() {
                 setMovies(res);
             })
             .catch(err => console.log(err))
+            .finally(() => {setIsLoading(false)}); 
 
             MainApi.getSavedMovies()
             .then((res) => {
                 setSavedMovies(res);
-                console.log(res);
             })
             .catch(err => console.log(err))
         }
@@ -73,7 +73,6 @@ function App() {
                 MainApi.getSavedMovies()
                 .then((res) => {
                     setSavedMovies(res);
-                    console.log(res);
                 })
                 .catch(err => console.log(err))
             }
@@ -130,6 +129,12 @@ function App() {
                 setCurrentUser({});
                 setAuthorized(false);
                 setLoggedIn(false);
+                localStorage.removeItem('results');
+                localStorage.removeItem('savedMoviesResults');
+                localStorage.removeItem('query');
+                localStorage.removeItem('savedMoviesQuery');
+                localStorage.removeItem('isShorts');
+                localStorage.removeItem('isSavedMoviesShorts');
                 navigate('/')
             }})
         .catch(console.error);
@@ -156,10 +161,10 @@ function App() {
                     />
                 <main>
                     <Movies
+                        isLoading={isLoading}
                         saveMovie={saveMovie}
                         formatDuration={formatDuration}
                     />
-                    <More/>
                 </main>
                 <Footer/>
             </>
@@ -198,7 +203,6 @@ function App() {
             </>
       );
     }
-
 
     return (
         <CurrentUserContext.Provider value={currentUser}>

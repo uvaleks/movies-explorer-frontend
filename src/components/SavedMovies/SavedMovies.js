@@ -19,14 +19,22 @@ export default function SavedMovies({ formatDuration, onDelete }) {
   useEffect(() => {
     if (savedMoviesQuery) {
       const includesQuery = savedMovies.filter(movie => movie.nameRU.toLowerCase().includes(savedMoviesQuery.toLowerCase()));
+      localStorage.setItem('savedMoviesQuery', savedMoviesQuery);
+      localStorage.setItem('savedMoviesResults', JSON.stringify(includesQuery));
+      setSearchedSavedMovies(includesQuery);
       if (isSavedShorts) {
         const shortsIncludesQuery = includesQuery.filter(movie => movie.duration < 41);
         setSearchedSavedMovies(shortsIncludesQuery);
-      } else setSearchedSavedMovies(includesQuery);
+        localStorage.setItem('savedMoviesResults', JSON.stringify(shortsIncludesQuery));
+      }
     } else if (isSavedShorts) {
       const shortsFromSaved = savedMovies.filter(movie => movie.duration < 41);
       setSearchedSavedMovies(shortsFromSaved);
-    } else setSearchedSavedMovies(savedMovies)
+      localStorage.setItem('savedMoviesResults', JSON.stringify(shortsFromSaved));
+    } else {
+      setSearchedSavedMovies(savedMovies);
+      localStorage.setItem('savedMoviesQuery', savedMoviesQuery);
+    }
   }, [savedMoviesQuery, isSavedShorts]);
 
     return (
