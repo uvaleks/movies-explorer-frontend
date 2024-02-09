@@ -21,13 +21,14 @@ import './App.css';
 
 function App() {    
     const [currentUser, setCurrentUser] = useState({});
+    const [beatfilmMovies, setBeatfilmMovies] = useState([]);
     const [movies, setMovies] = useState([]);
     const [savedMovies, setSavedMovies] = useState([]);
     const navigate = useNavigate();
     const [isLoggedIn, setLoggedIn] = useState(false);
     const [isAuthorized, setAuthorized] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const loggedInUserId = localStorage.getItem('loggedInUserId');
@@ -41,50 +42,108 @@ function App() {
 
     useEffect(() => {
         if (isLoggedIn) {
+
             auth.getUserInfo()
-            .then((userObject) => {
+                .then((userObject) => {
                 if (userObject) {
                     setCurrentUser(userObject);
                     setAuthorized(true);
                     navigate('/movies');
                 }
-            })
-            .catch(console.error)
-
+                })
+                .catch(console.error);
+      
             MoviesApi.getMovies()
-            .then((res) => {
-                setMovies(res);
-            })
-            .catch(err => console.log(err))
-            .finally(() => {setIsLoading(false)}); 
-
-            MainApi.getSavedMovies()
-            .then((res) => {
-                setSavedMovies(res);
-            })
-            .catch(err => console.log(err))
+                .then((res) => {
+                    setBeatfilmMovies(res);
+                    getSavedMovies();
+                })
+                .catch(err => console.log(err))
         }
-      }, [isLoggedIn]);
+    }, [isLoggedIn]);
+
+    const getSavedMovies = () => {
+        MainApi.getSavedMovies()
+        .then((res) => {
+            console.log('Trying to set Saved Movies', res);
+            setSavedMovies(res);
+            
+        })
+        .catch(err => console.log(err));
+    }
+      
+    const markObjects = () => {
+        console.log('Saved Movies was set', savedMovies);
+        console.log('Beatfilm Movies', beatfilmMovies);
+        if (savedMovies) {
+            const markedMovies = beatfilmMovies.map(obj => {
+                const savedMovie = savedMovies.find(item => item.movieId === obj.id);
+                if (savedMovie) {
+                    return { ...obj, _id: savedMovie._id, saved: true };
+                } else {
+                    return { ...obj, saved: false };
+                }
+            });
+            setMovies(markedMovies);
+            console.log('Marked Movies', markedMovies);
+        }
+    };
+    
+    useEffect(() => {     
+        markObjects();
+    }, [savedMovies]);
 
     const saveMovie = (movie) => {
         MainApi.postSavedMovie(movie)
-        .then((res) => {
-            if (res) {
-                MainApi.getSavedMovies()
-                .then((res) => {
-                    setSavedMovies(res);
-                })
-                .catch(err => console.log(err))
-            }
-        })
-        .catch(err => console.log(err))
+            .then((res) => {
+                console.log(savedMovies)
+                if (res) {
+                    // setMovies((state) => state.map((item) => {
+                    //     if (item.id === res.movieId) {
+                    //         return {...item, _id: res._id, saved: true};
+                    //     } else {
+                    //         return {...item};
+                    //     }
+                    // }));
+                    if (!savedMovies.find(item => item.movieId === res.movieId)) {
+                        setSavedMovies((state) => [...state, res]);
+                    }
+                }        
+            })
+            .catch(err => console.log(err));
     }
 
+    useEffect(() => {
+        console.log('EFFECT OF CHANGE', movies);
+    }, [movies])
+    
+
     const deleteMovie = (id) => {
-        MainApi.deleteMovie(id)
+        console.log(id)
+        const movieToMarkDeleted = savedMovies.find(movie => movie.movieId === id);
+        movieToMarkDeleted && MainApi.deleteMovie(movieToMarkDeleted._id)
         .then((res) => {
-            if (res.acknowledged) {
-                setSavedMovies(savedMovies.filter(savedMovie => savedMovie._id !== id));
+            if (res.acknowledged === true) {
+                // setMovies((state) => state.map((item) => {
+                //     console.log(item.id);
+                //     console.log(item.id === id);
+                //     if (item.id === id) {
+                //         return {...item, saved: false};
+                //     } else {
+                //         return {...item};
+                //     }
+                // }));
+                setSavedMovies((state) => state.filter((item) => item.movieId !== id));
+                // setSavedMovies((state) => state.map((item) => {
+                //     if (item.id === id) {
+                //         return {...item, _id: res._id, saved: false};
+                //     } else {
+                //         return {...item};
+                //     }
+                // }));
+
+                
+                // console.log(movies);
             }
         })
         .catch(err => console.log(err))
@@ -108,7 +167,7 @@ function App() {
         return auth.authorize(inputFields)
         .then((res) => {
             if (res.message === 'Всё верно!') {
-                localStorage.setItem('loggedInUserId', res._id);
+                localStorage.set('loggedInUserId', res._id);
                 setLoggedIn(true);
             }
         })
@@ -130,11 +189,8 @@ function App() {
                 setAuthorized(false);
                 setLoggedIn(false);
                 localStorage.removeItem('results');
-                localStorage.removeItem('savedMoviesResults');
                 localStorage.removeItem('query');
-                localStorage.removeItem('savedMoviesQuery');
                 localStorage.removeItem('isShorts');
-                localStorage.removeItem('isSavedMoviesShorts');
                 navigate('/')
             }})
         .catch(console.error);
@@ -164,6 +220,7 @@ function App() {
                         isLoading={isLoading}
                         saveMovie={saveMovie}
                         formatDuration={formatDuration}
+                        onDelete={deleteMovie}
                     />
                 </main>
                 <Footer/>

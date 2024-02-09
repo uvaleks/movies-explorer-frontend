@@ -7,6 +7,15 @@
     box-sizing: border-box;
 }
 
+.movies-card-list__nothing-found {
+    margin: 0;
+    position: absolute;
+    width: 100%;
+    right: 0;
+    text-align: center;
+}
+
+
 @media screen and (max-width: 768px) {
     .movies-card-list {
         padding: 70px 30px 10px;

@@ -1,20 +1,21 @@
 import React from 'react'; 
 import { MoviesContext } from '../../contexts/MoviesContext';
-import { SavedMoviesContext } from '../../contexts/SavedMoviesContext';
 import { useState, useEffect } from 'react';
-import SearchForm from '../SearchFrom/SearchFrom';
+import SearchForm from '../SearchForm/SearchForm';
 import Preloader from './Preloader/Preloader';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import MoviesCard from '../MoviesCard/MoviesCard';
 import More from '../More/More';
 
-export default function Movies({ isLoading, saveMovie, formatDuration }) {
+export default function Movies({ isLoading, saveMovie, formatDuration, onDelete }) {
   const movies = React.useContext(MoviesContext);
-  const savedMovies = React.useContext(SavedMoviesContext);
 
-  const [query, setQuery] = useState('');
   const [searchedMovies, setSearchedMovies] = useState([]);
   const [isShorts, setShorts] = useState(false);
+  const [isNothingFound, setNothingFound] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
+  const [visibleElements, setVisibleElements] = useState([]);
+
 
   const onSave = (idToSave) => {
     const movieToSave = movies.find(movie => movie.id === idToSave);
@@ -38,17 +39,11 @@ export default function Movies({ isLoading, saveMovie, formatDuration }) {
   };
 
   useEffect(() => {
-    if (JSON.parse(localStorage.getItem('results')) !== null) {
-      setSearchedMovies(JSON.parse(localStorage.getItem('results')));
-  };
-  }, []);
-
-
-  useEffect(() => {
-    if (query) {
-      const includesQuery = movies.filter(movie => movie.nameRU.toLowerCase().includes(query.toLowerCase()));
+    setNothingFound(false);
+    if (searchInput) {
+      const includesQuery = movies.filter(movie => movie.nameRU.toLowerCase().includes(searchInput.toLowerCase()));
       setSearchedMovies(includesQuery);
-      localStorage.setItem('query', query);
+      localStorage.setItem('query', searchInput);
       localStorage.setItem('results', JSON.stringify(includesQuery));
       if (isShorts) {
         const shortsIncludesQuery = includesQuery.filter(movie => movie.duration < 41);
@@ -60,29 +55,16 @@ export default function Movies({ isLoading, saveMovie, formatDuration }) {
         setSearchedMovies(shortsFromAll);
         localStorage.setItem('results', JSON.stringify(shortsFromAll));
     } else {
-      setSearchedMovies(movies);
-      localStorage.setItem('query', query);
+      setSearchedMovies([]);
+      setNothingFound(true);
+      localStorage.setItem('query', searchInput);
     };
-  }, [query, isShorts]);
+  }, [searchInput, isShorts, movies]);
 
-  useEffect(() => {
-    const markObjects = () => {
-      const markedMovies = movies.map(obj => {
-        if (savedMovies.some(item => item.movieId === obj.id)) {
-          return { ...obj, saved: true };
-        } else {
-          return obj;
-        }
-      });
-      setSearchedMovies(markedMovies);
-    };
-      markObjects();
-  }, [savedMovies]);
+  
 
   const [maxDisplayedElements, setMaxDisplayedElements] = useState(12);
   const [displayedElementsIncrement, setDisplayedElementsIncrement] = useState(3);
-  const [rowsPerPage, setRowsPerPage] = useState(4);
-  const [visibleElements, setVisibleElements] = useState([]);
 
   useEffect(() => {
     let timeoutId;
@@ -100,7 +82,7 @@ export default function Movies({ isLoading, saveMovie, formatDuration }) {
           setMaxDisplayedElements(5);
           setDisplayedElementsIncrement(2);
         }
-      }, 200); // задержка в миллисекундах
+      }, 200);
     }
     window.addEventListener('resize', handleResize);
     return () => {
@@ -120,23 +102,26 @@ export default function Movies({ isLoading, saveMovie, formatDuration }) {
     return (
         <section className='movies'>
           <SearchForm
-            setQuery={setQuery}
+            searchInput={searchInput}
+            setSearchInput={setSearchInput}
             setShorts={setShorts}
             isSavedMoviesPage={false}
           />
           <MoviesCardList
-            rowsPerPage={rowsPerPage}
-            setRowsPerPage={setRowsPerPage}
+            isNothingFound={isNothingFound}
           >
-            {visibleElements && visibleElements.map((movie) => (
+            {movies && movies.map((movie) => (
               <MoviesCard
+                key={movie.id}
                 isInSearchResults={true} 
                 title={movie.nameRU}
                 duration={formatDuration(movie.duration)}
                 poster={'https://api.nomoreparties.co' + movie.image.url}
+                trailerLink={movie.trailerLink}
                 movieId={movie.id}
                 onSave={onSave}
                 isSaved={movie.saved}
+                onDelete={onDelete}
               />
             ))}
           </MoviesCardList>

@@ -1,13 +1,12 @@
-import { useEffect } from 'react';
 import './MoviesCardList.css';
 
-export default function MoviesCardList({ children, rowsPerPage, setRowsPerPage }) {
+export default function MoviesCardList({ children, isNothingFound }) {
   
     return (
         <div 
             className="movies-card-list"
-            // style={{ gridTemplateRows: `repeat(${rowsPerPage}, 1fr)` }}
         >
+            {isNothingFound && <p className="movies-card-list__nothing-found">Ничего не найдено</p>}
             {children}
         </div>
   );

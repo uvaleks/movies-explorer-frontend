@@ -1,26 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import FilterCheckbox from './FilterCheckbox/FilterCheckbox';
 import './SearchForm.css';
 
-export default function SearchForm({ setQuery, setShorts, isSavedMoviesPage }) {
-    const [searchInput, setSearchInput] = useState('');
-
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      setQuery(searchInput);
-    }
+export default function SearchForm({ searchInput, setSearchInput, setShorts, isSavedMoviesPage }) {
 
     const handleChange = (e) => {
         setSearchInput(e.target.value);
     };
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      setSearchInput(searchInput);
+    }
     
     useEffect(() => {
         if (!isSavedMoviesPage) {
             if (localStorage.getItem('query')) {
-                setSearchInput(localStorage.getItem('query'));
-            }
-        } else {
-            if (localStorage.getItem('savedMoviesQuery')) {
                 setSearchInput(localStorage.getItem('query'));
             }
         }

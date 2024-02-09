@@ -5,6 +5,7 @@
     overflow: hidden;
     position: relative;
     cursor: pointer;
+    text-decoration: none;
 }
 
 .movies-card:hover > .movies-card__action-button_save {
