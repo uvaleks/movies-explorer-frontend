@@ -5,25 +5,21 @@ export default function FilterCheckbox({ setShorts, isSavedMoviesPage }) {
   const [shortsCheckbox, setShortsCheckbox] = useState(false);
 
   const handleChange = () => {
-    setShortsCheckbox(!shortsCheckbox)
+    setShortsCheckbox(!shortsCheckbox);
+    localStorage.setItem('isShorts', !shortsCheckbox);
+    setShorts(!shortsCheckbox);
   }
 
   useEffect(() => {
-    setShorts(shortsCheckbox);
-  }, [shortsCheckbox]);
-
-  useEffect(() => {
     if (!isSavedMoviesPage) {
+      console.log('LS isSorts: ', localStorage.getItem('isShorts'));
       if (localStorage.getItem('isShorts') !== null) {
-        setShortsCheckbox((localStorage.getItem('isShorts') === "false") ? false : true);
+        console.log(localStorage.getItem('isShorts') === "false" ? false : true);
+        setShortsCheckbox(localStorage.getItem('isShorts') === "false" ? false : true);
+        setShorts(shortsCheckbox);
+        console.log('isShorts set to: ', shortsCheckbox);
       }
     } 
-  }, []);
-
-  useEffect(() => {
-    if (!isSavedMoviesPage) {
-      localStorage.setItem('isShorts', shortsCheckbox);
-    }
   }, [shortsCheckbox]);
 
   return (

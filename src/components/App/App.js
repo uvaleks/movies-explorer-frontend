@@ -17,6 +17,7 @@ import Login from '../Login/Login';
 import Register from '../Register/Register';
 import Profile from '../Profile/Profile';
 import NotFound from '../NotFound/NotFound';
+import Popup from '../Popup/Popup';
 import './App.css';
 
 function App() {    
@@ -26,7 +27,7 @@ function App() {
     const [savedMovies, setSavedMovies] = useState([]);
     const navigate = useNavigate();
     const [isLoggedIn, setLoggedIn] = useState(false);
-    const [isAuthorized, setAuthorized] = useState(false);
+    const [isErrorTooltipOpen, setErrorTooltipOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -38,7 +39,7 @@ function App() {
         } else {
           setLoggedIn(false);
         };
-      }, []);
+      }, [isLoggedIn]);
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -47,7 +48,6 @@ function App() {
                 .then((userObject) => {
                 if (userObject) {
                     setCurrentUser(userObject);
-                    setAuthorized(true);
                     navigate('/movies');
                 }
                 })
@@ -65,7 +65,6 @@ function App() {
     const getSavedMovies = () => {
         MainApi.getSavedMovies()
         .then((res) => {
-            console.log('Trying to set Saved Movies', res);
             setSavedMovies(res);
             
         })
@@ -73,8 +72,6 @@ function App() {
     }
       
     const markObjects = () => {
-        console.log('Saved Movies was set', savedMovies);
-        console.log('Beatfilm Movies', beatfilmMovies);
         if (savedMovies) {
             const markedMovies = beatfilmMovies.map(obj => {
                 const savedMovie = savedMovies.find(item => item.movieId === obj.id);
@@ -85,7 +82,6 @@ function App() {
                 }
             });
             setMovies(markedMovies);
-            console.log('Marked Movies', markedMovies);
         }
     };
     
@@ -96,15 +92,8 @@ function App() {
     const saveMovie = (movie) => {
         MainApi.postSavedMovie(movie)
             .then((res) => {
-                console.log(savedMovies)
+                console.log('savedMovies: ', savedMovies)
                 if (res) {
-                    // setMovies((state) => state.map((item) => {
-                    //     if (item.id === res.movieId) {
-                    //         return {...item, _id: res._id, saved: true};
-                    //     } else {
-                    //         return {...item};
-                    //     }
-                    // }));
                     if (!savedMovies.find(item => item.movieId === res.movieId)) {
                         setSavedMovies((state) => [...state, res]);
                     }
@@ -112,38 +101,13 @@ function App() {
             })
             .catch(err => console.log(err));
     }
-
-    useEffect(() => {
-        console.log('EFFECT OF CHANGE', movies);
-    }, [movies])
     
-
     const deleteMovie = (id) => {
-        console.log(id)
         const movieToMarkDeleted = savedMovies.find(movie => movie.movieId === id);
         movieToMarkDeleted && MainApi.deleteMovie(movieToMarkDeleted._id)
         .then((res) => {
             if (res.acknowledged === true) {
-                // setMovies((state) => state.map((item) => {
-                //     console.log(item.id);
-                //     console.log(item.id === id);
-                //     if (item.id === id) {
-                //         return {...item, saved: false};
-                //     } else {
-                //         return {...item};
-                //     }
-                // }));
                 setSavedMovies((state) => state.filter((item) => item.movieId !== id));
-                // setSavedMovies((state) => state.map((item) => {
-                //     if (item.id === id) {
-                //         return {...item, _id: res._id, saved: false};
-                //     } else {
-                //         return {...item};
-                //     }
-                // }));
-
-                
-                // console.log(movies);
             }
         })
         .catch(err => console.log(err))
@@ -152,11 +116,13 @@ function App() {
     const onRegister = (inputFields) => {
         return auth.register(inputFields)
         .then((res) => {
-          return res;
+            if (res._id) {
+                onLogin({ email: inputFields.email, password: inputFields.password });
+            }
         })
         .catch((err) => {
             if (err === 'Ошибка 400') {
-                setErrorMessage('Пользователь с таким email уже существует')
+                setErrorMessage('Пользователь с таким email уже существует');
             } else {
             console.log(err)
             }
@@ -167,13 +133,13 @@ function App() {
         return auth.authorize(inputFields)
         .then((res) => {
             if (res.message === 'Всё верно!') {
-                localStorage.set('loggedInUserId', res._id);
+                localStorage.setItem('loggedInUserId', res._id);
                 setLoggedIn(true);
             }
         })
         .catch((err) => {
             if (err === 'Ошибка 401') {
-                setErrorMessage('Неверный email или пароль')
+                setErrorMessage('Неверный email или пароль');
             } else {
             console.log(err)
             }
@@ -186,9 +152,7 @@ function App() {
             if (res.message === "Вы успешно вышли из системы") {
                 localStorage.removeItem('loggedInUserId');
                 setCurrentUser({});
-                setAuthorized(false);
                 setLoggedIn(false);
-                localStorage.removeItem('results');
                 localStorage.removeItem('query');
                 localStorage.removeItem('isShorts');
                 navigate('/')
@@ -208,12 +172,23 @@ function App() {
         return formattedDuration; 
     }
 
+    const handleCloseErrorTooltip = () => {
+        setErrorTooltipOpen(false);
+        setErrorMessage('');
+    }
+
+    useEffect(() => {
+        if (errorMessage) {
+            setErrorTooltipOpen(true);
+        }
+    }, [errorMessage])
+
     function SearchMovies() {
         return (
             <>
                 <Header
                     isOnMain={false}
-                    isAuthorized={isAuthorized}
+                    isAuthorized={isLoggedIn}
                     />
                 <main>
                     <Movies
@@ -221,6 +196,7 @@ function App() {
                         saveMovie={saveMovie}
                         formatDuration={formatDuration}
                         onDelete={deleteMovie}
+                        setErrorMessage={setErrorMessage}
                     />
                 </main>
                 <Footer/>
@@ -233,7 +209,7 @@ function App() {
             <>
                 <Header
                     isOnMain={false}
-                    isAuthorized={isAuthorized} 
+                    isAuthorized={isLoggedIn} 
                     />
                 <main>
                     <SavedMovies
@@ -251,7 +227,7 @@ function App() {
             <>
                 <Header
                     isOnMain={false}
-                    isAuthorized={isAuthorized}
+                    isAuthorized={isLoggedIn}
                 />
                 <Profile
                     handleUpdateUser={handleUpdateUser}
@@ -274,7 +250,7 @@ function App() {
                                 <>
                                 <Header
                                     isOnMain={true}
-                                    isAuthorized={isAuthorized}
+                                    isAuthorized={isLoggedIn}
                                 />
                                 <Main/>
                                 <Footer/>
@@ -284,34 +260,40 @@ function App() {
                                 path="/movies" 
                                 element={
                                     <ProtectedRoute
-                                        isAuthorized={isAuthorized}
+                                        isAuthorized={isLoggedIn}
                                         component={SearchMovies}
                                     />
                             } />
                             <Route path="/saved-movies" element={
                                 <ProtectedRoute
-                                    isAuthorized={isAuthorized}
+                                    isAuthorized={isLoggedIn}
                                     component={SavedMoviesPage}
                                 />
                             } />
                             <Route path="/profile" element={
                                 <ProtectedRoute
-                                    isAuthorized={isAuthorized}
+                                    isAuthorized={isLoggedIn}
                                     component={ProfilePage}
                                 />
                             } />
                             <Route path="/signin" element={
                                 <Login
                                     onLogin={onLogin}
-                                    setAuthorized={setAuthorized}
+                                    setAuthorized={isLoggedIn}
                                 />
                             } />
                             <Route path="/signup" element={
                                 <Register
                                     onRegister={onRegister}
+                                    setLoggedIn={setLoggedIn}
                                 />
                             } />
                         </Routes>
+                        <Popup 
+                            isOpen={isErrorTooltipOpen}
+                            onClose={handleCloseErrorTooltip}
+                            message={errorMessage}
+                        />
                     </div>  
                 </SavedMoviesContext.Provider>
             </MoviesContext.Provider>

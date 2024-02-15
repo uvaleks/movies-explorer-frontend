@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import './Register.css';
 import Logo from '../Logo/Logo';
 
-export default function Register({ onRegister }) {
+export default function Register({ onRegister, setLoggedIn }) {
     const navigate = useNavigate();
     const nameRef = React.createRef();
     const emailRef = React.createRef();
@@ -32,7 +32,8 @@ export default function Register({ onRegister }) {
           .then((res) => {
             if (res) {
                 resetForm();
-                navigate('/signin');
+                //localStorage.setItem('loggedInUserId', res._id);
+                //setLoggedIn(true);
             }
           })
     };

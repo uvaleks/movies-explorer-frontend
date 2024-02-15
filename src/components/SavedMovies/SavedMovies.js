@@ -21,15 +21,15 @@ export default function SavedMovies({ formatDuration, onDelete }) {
             {movies && movies.map((movie) => (
               movie.saved 
               ? <MoviesCard
-                key={movie.id}
-                isInSearchResults={false} 
-                title={movie.nameRU}
-                duration={formatDuration(movie.duration)}
-                poster={'https://api.nomoreparties.co' + movie.image.url}
-                trailerLink={movie.trailerLink}
-                movieId={movie.id}
-                isSaved={movie.saved}
-                onDelete={onDelete}
+                  key={movie.id.toString()}
+                  isInSearchResults={false} 
+                  title={movie.nameRU}
+                  duration={formatDuration(movie.duration)}
+                  poster={'https://api.nomoreparties.co' + movie.image.url}
+                  trailerLink={movie.trailerLink}
+                  movieId={movie.id}
+                  isSaved={movie.saved}
+                  onDelete={onDelete}
                 />
               : <></>
             ))}

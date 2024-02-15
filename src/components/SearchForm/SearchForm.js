@@ -1,22 +1,29 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import FilterCheckbox from './FilterCheckbox/FilterCheckbox';
 import './SearchForm.css';
 
-export default function SearchForm({ searchInput, setSearchInput, setShorts, isSavedMoviesPage }) {
+export default function SearchForm({ setSearchInput, setShorts, isSavedMoviesPage, setErrorMessage }) {
+    const [inputField, setInputField] = useState('');
 
     const handleChange = (e) => {
-        setSearchInput(e.target.value);
+        setInputField(e.target.value);
     };
 
     const handleSubmit = async (e) => {
-      e.preventDefault();
-      setSearchInput(searchInput);
+        e.preventDefault();
+        localStorage.setItem('query', inputField);
+        if ((inputField === '') || (typeof text !== 'string')) {
+            setErrorMessage('Нужно ввести ключевое слово');
+        } else {
+            setSearchInput(inputField);
+        }
     }
     
     useEffect(() => {
         if (!isSavedMoviesPage) {
-            if (localStorage.getItem('query')) {
+            if (localStorage.getItem('query') !== null) {
                 setSearchInput(localStorage.getItem('query'));
+                setInputField(localStorage.getItem('query'));
             }
         }
     }, []);
@@ -29,7 +36,7 @@ export default function SearchForm({ searchInput, setSearchInput, setShorts, isS
             >
                 <input
                     onChange={handleChange}
-                    value={searchInput}
+                    value={inputField}
                     className="search__form-input"
                     placeholder="Фильм"
                 ></input>

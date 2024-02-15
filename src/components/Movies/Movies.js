@@ -7,15 +7,13 @@ import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import MoviesCard from '../MoviesCard/MoviesCard';
 import More from '../More/More';
 
-export default function Movies({ isLoading, saveMovie, formatDuration, onDelete }) {
+export default function Movies({ isLoading, saveMovie, formatDuration, onDelete, setErrorMessage }) {
   const movies = React.useContext(MoviesContext);
 
-  const [searchedMovies, setSearchedMovies] = useState([]);
   const [isShorts, setShorts] = useState(false);
   const [isNothingFound, setNothingFound] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [visibleElements, setVisibleElements] = useState([]);
-
 
   const onSave = (idToSave) => {
     const movieToSave = movies.find(movie => movie.id === idToSave);
@@ -38,30 +36,31 @@ export default function Movies({ isLoading, saveMovie, formatDuration, onDelete 
     };
   };
 
-  useEffect(() => {
-    setNothingFound(false);
-    if (searchInput) {
-      const includesQuery = movies.filter(movie => movie.nameRU.toLowerCase().includes(searchInput.toLowerCase()));
-      setSearchedMovies(includesQuery);
-      localStorage.setItem('query', searchInput);
-      localStorage.setItem('results', JSON.stringify(includesQuery));
-      if (isShorts) {
-        const shortsIncludesQuery = includesQuery.filter(movie => movie.duration < 41);
-        setSearchedMovies(shortsIncludesQuery);
-        localStorage.setItem('results', JSON.stringify(shortsIncludesQuery));
-      } 
-    } else if (isShorts) {
-        const shortsFromAll = movies.filter(movie => movie.duration < 41);
-        setSearchedMovies(shortsFromAll);
-        localStorage.setItem('results', JSON.stringify(shortsFromAll));
-    } else {
-      setSearchedMovies([]);
-      setNothingFound(true);
-      localStorage.setItem('query', searchInput);
-    };
-  }, [searchInput, isShorts, movies]);
-
-  
+  // useEffect(() => {
+  //   setNothingFound(false);
+  //   console.log('searchInput: ', searchInput);
+  //   console.log('isShorts: ', isShorts);
+  //   console.log('isShorts Boolean: ', Boolean(isShorts));
+  //   console.log('movies: ', movies);
+  //   if (searchInput) {
+  //     const includesQuery = movies.filter(movie => movie.nameRU.toLowerCase().includes(searchInput.toLowerCase()));
+  //     setSearchedMovies((state) => movies.filter(movie => movie.nameRU.toLowerCase().includes(searchInput.toLowerCase())));
+  //     localStorage.setItem('query', searchInput);
+  //     localStorage.setItem('results', JSON.stringify(includesQuery));
+  //     console.log('searchedMovies: ', searchedMovies);
+  //     if (Boolean(isShorts)) {
+  //       const shortsIncludesQuery = includesQuery.filter(movie => movie.duration < 41);
+  //       setSearchedMovies((state) => includesQuery.filter(movie => movie.duration < 41));
+  //       localStorage.setItem('results', JSON.stringify(shortsIncludesQuery));
+  //       console.log('searchedMovies: ', searchedMovies);
+  //     } 
+  //   } else if (isNothingFound) {
+  //     setErrorMessage('Нужно ввести ключевое слово');
+  //     setSearchedMovies([]);
+  //     setNothingFound(true);
+  //     localStorage.setItem('query', searchInput);
+  //   };
+  // }, [searchInput]);
 
   const [maxDisplayedElements, setMaxDisplayedElements] = useState(12);
   const [displayedElementsIncrement, setDisplayedElementsIncrement] = useState(3);
@@ -96,8 +95,8 @@ export default function Movies({ isLoading, saveMovie, formatDuration, onDelete 
   }
 
   useEffect(() => {
-    setVisibleElements(searchedMovies.slice(0, maxDisplayedElements));
-  }, [searchedMovies, maxDisplayedElements]);
+    setVisibleElements(movies.slice(0, maxDisplayedElements));
+  }, [maxDisplayedElements]);
 
     return (
         <section className='movies'>
@@ -106,29 +105,47 @@ export default function Movies({ isLoading, saveMovie, formatDuration, onDelete 
             setSearchInput={setSearchInput}
             setShorts={setShorts}
             isSavedMoviesPage={false}
+            setErrorMessage={setErrorMessage}
           />
           <MoviesCardList
             isNothingFound={isNothingFound}
           >
-            {movies && movies.map((movie) => (
-              <MoviesCard
-                key={movie.id}
-                isInSearchResults={true} 
-                title={movie.nameRU}
-                duration={formatDuration(movie.duration)}
-                poster={'https://api.nomoreparties.co' + movie.image.url}
-                trailerLink={movie.trailerLink}
-                movieId={movie.id}
-                onSave={onSave}
-                isSaved={movie.saved}
-                onDelete={onDelete}
-              />
-            ))}
+              {movies && movies.map((movie) => (
+                (movie.nameRU.toLowerCase().includes(searchInput.toLowerCase())) 
+                ? (
+                (Boolean(isShorts)) 
+                ? (movie.duration < 41) &&
+                  <MoviesCard
+                    key={movie.id.toString()}
+                    isInSearchResults={true} 
+                    title={movie.nameRU}
+                    duration={formatDuration(movie.duration)}
+                    poster={'https://api.nomoreparties.co' + movie.image.url}
+                    trailerLink={movie.trailerLink}
+                    movieId={movie.id}
+                    onSave={onSave}
+                    isSaved={movie.saved}
+                    onDelete={onDelete}
+                  />
+                : <MoviesCard
+                    key={movie.id.toString()}
+                    isInSearchResults={true} 
+                    title={movie.nameRU}
+                    duration={formatDuration(movie.duration)}
+                    poster={'https://api.nomoreparties.co' + movie.image.url}
+                    trailerLink={movie.trailerLink}
+                    movieId={movie.id}
+                    onSave={onSave}
+                    isSaved={movie.saved}
+                    onDelete={onDelete}
+                  />)
+                : <></>
+              ))}
           </MoviesCardList>
           {isLoading && <Preloader/>}
-          {!(maxDisplayedElements >= searchedMovies.length) && <More
+          {/* {!(maxDisplayedElements >= searchedMovies.length) && <More
             onMore={handleMore}
-          />}
+          />} */}
         </section>     
   );
 }
