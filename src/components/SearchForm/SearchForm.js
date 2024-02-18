@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import FilterCheckbox from './FilterCheckbox/FilterCheckbox';
 import './SearchForm.css';
 
-export default function SearchForm({ setSearchInput, setShorts, isSavedMoviesPage, setErrorMessage }) {
+export default function SearchForm({ goSearch, setSearchInput, isShorts, setShorts, isSavedMoviesPage, setErrorMessage }) {
     const [inputField, setInputField] = useState('');
 
     const handleChange = (e) => {
@@ -11,12 +11,13 @@ export default function SearchForm({ setSearchInput, setShorts, isSavedMoviesPag
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        localStorage.setItem('query', inputField);
-        if ((inputField === '') || (typeof text !== 'string')) {
+        if ((inputField === '') || (!/^[а-яА-ЯёЁa-zA-Z]+$/.test(inputField))) {
             setErrorMessage('Нужно ввести ключевое слово');
         } else {
             setSearchInput(inputField);
+            localStorage.setItem('query', inputField);
         }
+        goSearch();
     }
     
     useEffect(() => {
@@ -43,6 +44,7 @@ export default function SearchForm({ setSearchInput, setShorts, isSavedMoviesPag
                 <button className="search__form-button" type="submit">Найти</button>
             </form>
             <FilterCheckbox
+                isShorts={isShorts}
                 setShorts={setShorts}
                 isSavedMoviesPage={isSavedMoviesPage}
             />

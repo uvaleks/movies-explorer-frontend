@@ -7,13 +7,30 @@ import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import MoviesCard from '../MoviesCard/MoviesCard';
 import More from '../More/More';
 
-export default function Movies({ isLoading, saveMovie, formatDuration, onDelete, setErrorMessage }) {
+export default function Movies({ goSearch, isLoading, saveMovie, formatDuration, onDelete, setErrorMessage }) {
   const movies = React.useContext(MoviesContext);
 
-  const [isShorts, setShorts] = useState(false);
-  const [isNothingFound, setNothingFound] = useState(false);
-  const [searchInput, setSearchInput] = useState('');
+  const [moviesToRrender, setMoviesToRrender] = useState([]);
+  const [renderedMoviesCount, setRenderedMoviesCount] = useState(0);
   const [visibleElements, setVisibleElements] = useState([]);
+
+  const [maxDisplayedElements, setMaxDisplayedElements] = useState(12);
+  const [displayedElementsIncrement, setDisplayedElementsIncrement] = useState(3);
+
+  const [isShorts, setShorts] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
+
+  useEffect(() => {
+    setMoviesToRrender(prev => movies.filter(movie => movie.nameRU.toLowerCase().includes(searchInput.toLowerCase())));
+    if (isShorts) {
+      setMoviesToRrender(prev => prev.filter(movie => movie.duration < 41));
+    }
+    console.log(maxDisplayedElements);
+  }, [searchInput, isShorts]);
+
+  useEffect(() => {
+    setRenderedMoviesCount(moviesToRrender.length);
+  }, [moviesToRrender]);
 
   const onSave = (idToSave) => {
     const movieToSave = movies.find(movie => movie.id === idToSave);
@@ -62,9 +79,6 @@ export default function Movies({ isLoading, saveMovie, formatDuration, onDelete,
   //   };
   // }, [searchInput]);
 
-  const [maxDisplayedElements, setMaxDisplayedElements] = useState(12);
-  const [displayedElementsIncrement, setDisplayedElementsIncrement] = useState(3);
-
   useEffect(() => {
     let timeoutId;
     function handleResize() {
@@ -95,27 +109,33 @@ export default function Movies({ isLoading, saveMovie, formatDuration, onDelete,
   }
 
   useEffect(() => {
-    setVisibleElements(movies.slice(0, maxDisplayedElements));
-  }, [maxDisplayedElements]);
+    console.log('moviesToRrender: ', moviesToRrender)
+    console.log('maxDisplayedElements: ', maxDisplayedElements)
+    if (renderedMoviesCount > maxDisplayedElements) {
+      console.log('SLICED')
+      setVisibleElements(prev => moviesToRrender.slice(0, maxDisplayedElements));
+    } else {
+      console.log('NOT SLICED')
+      setVisibleElements(prev => moviesToRrender);
+    }
+    console.log('visibleElements: ', visibleElements)
+  }, [maxDisplayedElements, moviesToRrender]);
 
     return (
         <section className='movies'>
           <SearchForm
-            searchInput={searchInput}
+            goSearch={goSearch}
             setSearchInput={setSearchInput}
+            isShorts={isShorts}
             setShorts={setShorts}
             isSavedMoviesPage={false}
             setErrorMessage={setErrorMessage}
           />
           <MoviesCardList
-            isNothingFound={isNothingFound}
+            isNothingFound={((searchInput !== '') && (renderedMoviesCount === 0)) && true}
           >
-              {movies && movies.map((movie) => (
-                (movie.nameRU.toLowerCase().includes(searchInput.toLowerCase())) 
-                ? (
-                (Boolean(isShorts)) 
-                ? (movie.duration < 41) &&
-                  <MoviesCard
+              {visibleElements && visibleElements.map((movie) => 
+                <MoviesCard
                     key={movie.id.toString()}
                     isInSearchResults={true} 
                     title={movie.nameRU}
@@ -127,25 +147,12 @@ export default function Movies({ isLoading, saveMovie, formatDuration, onDelete,
                     isSaved={movie.saved}
                     onDelete={onDelete}
                   />
-                : <MoviesCard
-                    key={movie.id.toString()}
-                    isInSearchResults={true} 
-                    title={movie.nameRU}
-                    duration={formatDuration(movie.duration)}
-                    poster={'https://api.nomoreparties.co' + movie.image.url}
-                    trailerLink={movie.trailerLink}
-                    movieId={movie.id}
-                    onSave={onSave}
-                    isSaved={movie.saved}
-                    onDelete={onDelete}
-                  />)
-                : <></>
-              ))}
+              )}
           </MoviesCardList>
           {isLoading && <Preloader/>}
-          {/* {!(maxDisplayedElements >= searchedMovies.length) && <More
+          {(maxDisplayedElements < renderedMoviesCount) && <More
             onMore={handleMore}
-          />} */}
+          />}
         </section>     
   );
 }

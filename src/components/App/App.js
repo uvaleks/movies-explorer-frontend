@@ -52,23 +52,28 @@ function App() {
                 }
                 })
                 .catch(console.error);
-      
-            MoviesApi.getMovies()
-                .then((res) => {
-                    setBeatfilmMovies(res);
-                    getSavedMovies();
-                })
-                .catch(err => console.log(err))
         }
     }, [isLoggedIn]);
+
+    const goSearch = () => {
+        if (movies.length === 0) {
+            setIsLoading(true);
+            MoviesApi.getMovies()
+            .then((res) => {
+                setBeatfilmMovies(res);
+                getSavedMovies();
+            })
+            .catch(err => console.log(err))
+        }
+    }
 
     const getSavedMovies = () => {
         MainApi.getSavedMovies()
         .then((res) => {
             setSavedMovies(res);
-            
         })
-        .catch(err => console.log(err));
+        .catch(err => console.log(err))
+        .finally(setIsLoading(false));
     }
       
     const markObjects = () => {
@@ -192,6 +197,7 @@ function App() {
                     />
                 <main>
                     <Movies
+                        goSearch={goSearch}
                         isLoading={isLoading}
                         saveMovie={saveMovie}
                         formatDuration={formatDuration}
