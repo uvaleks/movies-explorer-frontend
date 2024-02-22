@@ -1,8 +1,9 @@
 import popupErrorImg from '../../images/popup-error.svg';
+import popupOkImg from '../../images/popup-ok.svg';
 import { useEffect } from "react";
 import './Popup.css';
 
-const Popup = ({ isOpen, onClose, message }) => {
+const Popup = ({ isOpen, onClose, message, type }) => {
 
   useEffect(() => {
     if (!isOpen) return;
@@ -29,7 +30,7 @@ const Popup = ({ isOpen, onClose, message }) => {
       onClick={handleOverlay}
     >
         <div className="popup__container">
-          <img className="popup__status-icon" src={popupErrorImg} alt='Ошибка' />
+          <img className="popup__status-icon" src={type === 'error' ? popupErrorImg : popupOkImg} alt={type === 'error' ? 'Ошибка' : 'Успех'}/>
           <h2 className="popup__title">{message}</h2>
           <button
             className='popup__close-button'

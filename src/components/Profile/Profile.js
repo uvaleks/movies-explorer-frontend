@@ -52,11 +52,15 @@ export default function Profile({ handleUpdateUser, onSignOut }) {
     }
 
     useEffect(() => {
-        if (nameRef.current.validity.valid && emailRef.current.validity.valid) {
-            setSubmitButtonDisabled(false);
-        } else {
-            setSubmitButtonDisabled(true);
-        }
+        if (!isButtonInEditState) {
+            if (currentUser.name === nameRef.current.value && currentUser.email === emailRef.current.value) {
+                setSubmitButtonDisabled(true);
+            } else if (nameRef.current.validity.valid && emailRef.current.validity.valid) {
+                setSubmitButtonDisabled(false);
+            } else {
+                setSubmitButtonDisabled(true);
+            }
+        } 
     }, [nameRef, emailRef]);
 
     useEffect(() => {

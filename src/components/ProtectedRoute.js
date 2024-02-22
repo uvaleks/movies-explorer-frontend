@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ component: Component, ...props  }) => {
   return (
-    props.isAuthorized ? <Component {...props} /> : <Navigate to="/signin" replace/>
+    props.isAuthorized ? <Component {...props} /> : <Navigate to="/" replace/>
 )}
 
 export default ProtectedRoute;

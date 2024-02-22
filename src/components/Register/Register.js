@@ -32,8 +32,6 @@ export default function Register({ onRegister, setLoggedIn }) {
           .then((res) => {
             if (res) {
                 resetForm();
-                //localStorage.setItem('loggedInUserId', res._id);
-                //setLoggedIn(true);
             }
           })
     };

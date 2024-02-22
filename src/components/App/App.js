@@ -26,16 +26,16 @@ function App() {
     const [movies, setMovies] = useState([]);
     const [savedMovies, setSavedMovies] = useState([]);
     const navigate = useNavigate();
-    const [isLoggedIn, setLoggedIn] = useState(false);
-    const [isErrorTooltipOpen, setErrorTooltipOpen] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [isLoggedIn, setLoggedIn] = useState(true);
+    const [isPopupOpen, setPopupOpen] = useState(false);
+    const [popupMessage, setPopupMessage] = useState('');
+    const [popupType, setPopupType] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const loggedInUserId = localStorage.getItem('loggedInUserId');
         if (loggedInUserId) {
           setLoggedIn(true);
-          navigate('/movies');
         } else {
           setLoggedIn(false);
         };
@@ -43,16 +43,18 @@ function App() {
 
     useEffect(() => {
         if (isLoggedIn) {
-
             auth.getUserInfo()
                 .then((userObject) => {
                 if (userObject) {
                     setCurrentUser(userObject);
-                    navigate('/movies');
                 }
                 })
                 .catch(console.error);
         }
+    }, [isLoggedIn]);
+
+    useEffect(() => {
+        console.log('isLoggedIn: ', isLoggedIn);
     }, [isLoggedIn]);
 
     const goSearch = () => {
@@ -75,8 +77,8 @@ function App() {
         .catch(err => console.log(err))
         .finally(setIsLoading(false));
     }
-      
-    const markObjects = () => {
+    
+    useEffect(() => {     
         if (savedMovies) {
             const markedMovies = beatfilmMovies.map(obj => {
                 const savedMovie = savedMovies.find(item => item.movieId === obj.id);
@@ -88,23 +90,32 @@ function App() {
             });
             setMovies(markedMovies);
         }
-    };
-    
-    useEffect(() => {     
-        markObjects();
-    }, [savedMovies]);
+    }, [savedMovies, beatfilmMovies]);
 
-    const saveMovie = (movie) => {
-        MainApi.postSavedMovie(movie)
-            .then((res) => {
-                console.log('savedMovies: ', savedMovies)
-                if (res) {
-                    if (!savedMovies.find(item => item.movieId === res.movieId)) {
-                        setSavedMovies((state) => [...state, res]);
-                    }
-                }        
-            })
-            .catch(err => console.log(err));
+    const saveMovie = (idToSave) => {
+        const movieToSave = movies.find(movie => movie.id === idToSave);
+
+        MainApi.postSavedMovie({
+            country: movieToSave.country,
+            director: movieToSave.director,
+            duration: movieToSave.duration,
+            year: movieToSave.year,
+            description: movieToSave.description,
+            image: 'https://api.nomoreparties.co' + movieToSave.image.url,
+            trailerLink: movieToSave.trailerLink,
+            thumbnail: 'https://api.nomoreparties.co' + movieToSave.image.formats.thumbnail.url,
+            movieId: movieToSave.id,
+            nameRU: movieToSave.nameRU,
+            nameEN: movieToSave.nameEN,
+        })
+        .then((res) => {
+            console.log('savedMovies: ', savedMovies)
+            if (res) {
+                console.log(res);
+                getSavedMovies();
+            }        
+        })
+        .catch(err => console.log(err));
     }
     
     const deleteMovie = (id) => {
@@ -127,7 +138,8 @@ function App() {
         })
         .catch((err) => {
             if (err === 'Ошибка 400') {
-                setErrorMessage('Пользователь с таким email уже существует');
+                setPopupType('error');
+                setPopupMessage('Пользователь с таким email уже существует');
             } else {
             console.log(err)
             }
@@ -144,7 +156,8 @@ function App() {
         })
         .catch((err) => {
             if (err === 'Ошибка 401') {
-                setErrorMessage('Неверный email или пароль');
+                setPopupType('error');
+                setPopupMessage('Неверный email или пароль');
             } else {
             console.log(err)
             }
@@ -166,7 +179,15 @@ function App() {
     };
 
     function handleUpdateUser({name, email}) {
-          return MainApi.patchUserInfo({ name, email }).then(setCurrentUser);
+        return MainApi.patchUserInfo({ name, email })
+        .then(res => {
+            if (res) {
+                setCurrentUser(res);
+                setPopupType('ok');
+                setPopupMessage('Данные пользователя успешно обновлены')
+            }
+        })
+        .catch(console.error);
     }
 
     const formatDuration = (durationInMinutes) => {
@@ -177,16 +198,16 @@ function App() {
         return formattedDuration; 
     }
 
-    const handleCloseErrorTooltip = () => {
-        setErrorTooltipOpen(false);
-        setErrorMessage('');
+    const handleClosePopup = () => {
+        setPopupOpen(false);
+        setPopupMessage('');
     }
 
     useEffect(() => {
-        if (errorMessage) {
-            setErrorTooltipOpen(true);
+        if (popupMessage) {
+            setPopupOpen(true);
         }
-    }, [errorMessage])
+    }, [popupMessage])
 
     function SearchMovies() {
         return (
@@ -202,7 +223,8 @@ function App() {
                         saveMovie={saveMovie}
                         formatDuration={formatDuration}
                         onDelete={deleteMovie}
-                        setErrorMessage={setErrorMessage}
+                        setPopupMessage={setPopupMessage}
+                        setPopupType={setPopupType}
                     />
                 </main>
                 <Footer/>
@@ -219,8 +241,10 @@ function App() {
                     />
                 <main>
                     <SavedMovies
+                        goSearch={goSearch}
                         formatDuration={formatDuration}
                         onDelete={deleteMovie}
+                        setPopupMessage={setPopupMessage}
                     />
                 </main>
                 <Footer/>
@@ -296,9 +320,10 @@ function App() {
                             } />
                         </Routes>
                         <Popup 
-                            isOpen={isErrorTooltipOpen}
-                            onClose={handleCloseErrorTooltip}
-                            message={errorMessage}
+                            isOpen={isPopupOpen}
+                            onClose={handleClosePopup}
+                            message={popupMessage}
+                            type={popupType}
                         />
                     </div>  
                 </SavedMoviesContext.Provider>

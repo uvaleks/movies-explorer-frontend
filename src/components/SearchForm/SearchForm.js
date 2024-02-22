@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import FilterCheckbox from './FilterCheckbox/FilterCheckbox';
 import './SearchForm.css';
 
-export default function SearchForm({ goSearch, setSearchInput, isShorts, setShorts, isSavedMoviesPage, setErrorMessage }) {
+export default function SearchForm({ goSearch, setSearchInput, isShorts, setShorts, isSavedMoviesPage, setPopupMessage, setPopupType }) {
     const [inputField, setInputField] = useState('');
 
     const handleChange = (e) => {
@@ -12,12 +12,15 @@ export default function SearchForm({ goSearch, setSearchInput, isShorts, setShor
     const handleSubmit = async (e) => {
         e.preventDefault();
         if ((inputField === '') || (!/^[а-яА-ЯёЁa-zA-Z]+$/.test(inputField))) {
-            setErrorMessage('Нужно ввести ключевое слово');
+            setPopupType('error');
+            setPopupMessage('Нужно ввести ключевое слово');
         } else {
             setSearchInput(inputField);
-            localStorage.setItem('query', inputField);
+            if (!isSavedMoviesPage) {
+                localStorage.setItem('query', inputField);
+            }
+            goSearch();
         }
-        goSearch();
     }
     
     useEffect(() => {
@@ -27,7 +30,7 @@ export default function SearchForm({ goSearch, setSearchInput, isShorts, setShor
                 setInputField(localStorage.getItem('query'));
             }
         }
-    }, []);
+    }, [isSavedMoviesPage, setSearchInput]);
 
     return (
         <div className="search">
