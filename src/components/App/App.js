@@ -35,7 +35,7 @@ function App() {
     useEffect(() => {
         const loggedInUserId = localStorage.getItem('loggedInUserId');
         if (loggedInUserId) {
-          setLoggedIn(true);
+          navigate('movies');
         } else {
           setLoggedIn(false);
         };
@@ -51,10 +51,6 @@ function App() {
                 })
                 .catch(console.error);
         }
-    }, [isLoggedIn]);
-
-    useEffect(() => {
-        console.log('isLoggedIn: ', isLoggedIn);
     }, [isLoggedIn]);
 
     const goSearch = () => {
@@ -109,9 +105,7 @@ function App() {
             nameEN: movieToSave.nameEN,
         })
         .then((res) => {
-            console.log('savedMovies: ', savedMovies)
             if (res) {
-                console.log(res);
                 getSavedMovies();
             }        
         })

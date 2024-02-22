@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import './Register.css';
 import Logo from '../Logo/Logo';
 
-export default function Register({ onRegister, setLoggedIn }) {
+export default function Register({ onRegister }) {
     const navigate = useNavigate();
     const nameRef = React.createRef();
     const emailRef = React.createRef();

@@ -12,9 +12,7 @@ export default function FilterCheckbox({ isShorts, setShorts, isSavedMoviesPage 
 
   useEffect(() => {
     if (!isSavedMoviesPage) {
-      console.log('LS isSorts: ', localStorage.getItem('isShorts'));
       if (localStorage.getItem('isShorts') !== null) {
-        console.log(localStorage.getItem('isShorts') === "false" ? false : true);
         setShorts(() => localStorage.getItem('isShorts') === "false" ? false : true);
       }
     } 

@@ -84,13 +84,9 @@ export default function Movies({ goSearch, isLoading, saveMovie, formatDuration,
   }
 
   useEffect(() => {
-    console.log('moviesToRrender: ', moviesToRrender);
-    console.log('maxDisplayedElements: ', displayedElements);
     if (renderedMoviesCount > displayedElements) {
-      console.log('SLICED')
       setVisibleElements(prev => moviesToRrender.slice(0, displayedElements));
     } else {
-      console.log('NOT SLICED');
       setVisibleElements(prev => moviesToRrender);
     }
   }, [displayedElements, moviesToRrender, renderedMoviesCount]);
