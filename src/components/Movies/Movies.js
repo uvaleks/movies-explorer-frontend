@@ -6,6 +6,7 @@ import Preloader from './Preloader/Preloader';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import MoviesCard from '../MoviesCard/MoviesCard';
 import More from '../More/More';
+import * as Constants from '../../constants/constants';
 
 export default function Movies({ goSearch, isLoading, saveMovie, formatDuration, onDelete, setPopupMessage, setPopupType }) {
   const movies = React.useContext(MoviesContext);
@@ -17,37 +18,30 @@ export default function Movies({ goSearch, isLoading, saveMovie, formatDuration,
   const [displayedElements, setDisplayedElements] = useState(0);
   const [displayedElementsIncrement, setDisplayedElementsIncrement] = useState(3);
 
-  const [isShorts, setShorts] = useState(false);
-  const [searchInput, setSearchInput] = useState('');
+  const [isShorts, setShorts] = useState(Boolean(localStorage.getItem('isShorts')));
+  const [searchInput, setSearchInput] = useState(localStorage.getItem('query'));
 
   useEffect(() => {
     const windowWidth = window.innerWidth;
-      if (windowWidth > 768) {
-        setDisplayedElements(12);
-        setDisplayedElementsIncrement(3);
-      } else if ((windowWidth <= 768) && (windowWidth > 480)) {
-        setDisplayedElements(8);
-        setDisplayedElementsIncrement(2);
-      } else if (windowWidth <= 480) {
-        setDisplayedElements(5);
-        setDisplayedElementsIncrement(2);
+      if (windowWidth > Constants.MIDDLE_SCREEN_WIDTH) {
+        setDisplayedElements(Constants.MOVIES_AT_BIG_SCREEN_BY_DEFAULT);
+        setDisplayedElementsIncrement(Constants.MOVIES_AT_BIG_SCREEN_INCREMENT);
+      } else if ((windowWidth <= Constants.MIDDLE_SCREEN_WIDTH) && (windowWidth > Constants.SMALL_SCREEN_WIDTH)) {
+        setDisplayedElements(Constants.MOVIES_AT_MIDDLE_SCREEN_BY_DEFAULT);
+        setDisplayedElementsIncrement(Constants.MOVIES_AT_MIDDLE_SCREEN_INCREMENT);
+      } else if (windowWidth <= Constants.SMALL_SCREEN_WIDTH) {
+        setDisplayedElements(Constants.MOVIES_AT_SMALL_SCREEN_BY_DEFAULT);
+        setDisplayedElementsIncrement(Constants.MOVIES_AT_SMALL_SCREEN_INCREMENT);
       }
   }, []);
 
   useEffect(() => {
-    if (Number(localStorage.getItem('displayedElements') !== null)) {
-      setDisplayedElements(Number(localStorage.getItem('displayedElements')));
+    if (searchInput !== '')
+    setMoviesToRrender(prev => movies.filter(movie => movie.nameRU.toLowerCase().includes(searchInput.toLowerCase())));
+    if (isShorts) {
+      setMoviesToRrender(prev => prev.filter(movie => movie.duration <= Constants.SHORTS_DURATION));
     }
-  }, []);
-
-  useEffect(() => {
-      goSearch();
-      if (searchInput !== '')
-      setMoviesToRrender(prev => movies.filter(movie => movie.nameRU.toLowerCase().includes(searchInput.toLowerCase())));
-      if (isShorts) {
-        setMoviesToRrender(prev => prev.filter(movie => movie.duration < 41));
-      }
-  }, [searchInput, isShorts, movies]);
+  }, [searchInput, isShorts]);
 
   useEffect(() => {
     setRenderedMoviesCount(moviesToRrender.length);
@@ -59,17 +53,17 @@ export default function Movies({ goSearch, isLoading, saveMovie, formatDuration,
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
         const windowWidth = window.innerWidth;
-          if (windowWidth > 768) {
-            setDisplayedElements(12);
-            setDisplayedElementsIncrement(3);
-          } else if ((windowWidth <= 768) && (windowWidth > 480)) {
-            setDisplayedElements(8);
-            setDisplayedElementsIncrement(2);
-          } else if (windowWidth <= 480) {
-            setDisplayedElements(5);
-            setDisplayedElementsIncrement(2);
+          if (windowWidth > Constants.MIDDLE_SCREEN_WIDTH) {
+            setDisplayedElements(Constants.MOVIES_AT_BIG_SCREEN_BY_DEFAULT);
+            setDisplayedElementsIncrement(Constants.MOVIES_AT_BIG_SCREEN_INCREMENT);
+          } else if ((windowWidth <= Constants.MIDDLE_SCREEN_WIDTH) && (windowWidth > Constants.SMALL_SCREEN_WIDTH)) {
+            setDisplayedElements(Constants.MOVIES_AT_MIDDLE_SCREEN_BY_DEFAULT);
+            setDisplayedElementsIncrement(Constants.MOVIES_AT_MIDDLE_SCREEN_INCREMENT);
+          } else if (windowWidth <= Constants.SMALL_SCREEN_WIDTH) {
+            setDisplayedElements(Constants.MOVIES_AT_SMALL_SCREEN_BY_DEFAULT);
+            setDisplayedElementsIncrement(Constants.MOVIES_AT_SMALL_SCREEN_INCREMENT);
           }
-      }, 200);
+      }, Constants.RESIZE_LISTENER_TIMEOUT);
     }
     window.addEventListener('resize', handleResize);
     return () => {
@@ -79,7 +73,6 @@ export default function Movies({ goSearch, isLoading, saveMovie, formatDuration,
   }, []);
 
   const handleMore = () => {
-    localStorage.setItem('displayedElements', Number(displayedElements) + Number(displayedElementsIncrement));
     setDisplayedElements(Number(displayedElements) + Number(displayedElementsIncrement));
   }
 
@@ -104,10 +97,10 @@ export default function Movies({ goSearch, isLoading, saveMovie, formatDuration,
           />
           <MoviesCardList
             isNothingFound={((searchInput !== '') && (renderedMoviesCount === 0)) && (!isLoading) && true}
-          >
+          >    
               {visibleElements && visibleElements.map((movie) => 
                 <MoviesCard
-                    key={movie.id.toString()}
+                    key={movie.id}
                     isInSearchResults={true} 
                     title={movie.nameRU}
                     duration={formatDuration(movie.duration)}

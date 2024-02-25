@@ -3,7 +3,7 @@ import './MoviesCard.css';
 export default function MoviesCard({ isInSearchResults, isSaved, title, duration, poster, trailerLink, movieId, onSave, onDelete }) {
 
     return (
-        <a key={movieId.toString()} className="movies-card" href={trailerLink} target="_blank" rel="noreferrer">
+        <a className="movies-card" href={trailerLink} target="_blank" rel="noreferrer">
             <img className="movies-card__poster" src={poster} alt={title}/>
             {(isInSearchResults && isSaved)
             ? <button onClick={(e) => {e.preventDefault(); onDelete(movieId)}} className="movies-card__action-button movies-card__action-button_unsave" type="button" aria-label="Удалить"></button>

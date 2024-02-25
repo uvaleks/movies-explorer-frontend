@@ -5,22 +5,22 @@ import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import MoviesCard from '../MoviesCard/MoviesCard';
 import SearchForm from '../SearchForm/SearchForm';
 import './SavedMovies.css';
+import * as Constants from '../../constants/constants';
 
-export default function SavedMovies({ goSearch, formatDuration, onDelete, setPopupMessage }) {
+export default function SavedMovies({ goSearch, formatDuration, onDelete, setPopupMessage, setPopupType }) {
   const movies = React.useContext(MoviesContext);
   
+  const [moviesToRrender, setMoviesToRrender] = useState(movies);
   const [isShorts, setShorts] = useState(false);
   const [searchInput, setSearchInput] = useState('');
 
-  const [moviesToRrender, setMoviesToRrender] = useState(movies);
-
   useEffect(() => {
     if (searchInput !== '')
-    setMoviesToRrender(prev => movies.filter(movie => movie.nameRU.toLowerCase().includes(searchInput.toLowerCase())));
+      setMoviesToRrender(prev => prev.filter(movie => movie.nameRU.toLowerCase().includes(searchInput.toLowerCase())));
     if (isShorts) {
-      setMoviesToRrender(prev => prev.filter(movie => movie.duration < 41));
+      setMoviesToRrender(prev => prev.filter(movie => movie.duration <= Constants.SHORTS_DURATION));
     }
-  }, [searchInput, isShorts, movies]);
+  }, [searchInput, isShorts]);
 
     return (
         <section className='saved-movies'>
@@ -31,12 +31,13 @@ export default function SavedMovies({ goSearch, formatDuration, onDelete, setPop
             goSearch={goSearch}
             setSearchInput={setSearchInput}
             setPopupMessage={setPopupMessage}
+            setPopupType={setPopupType}
           />
           <MoviesCardList>
             {moviesToRrender && moviesToRrender.map((movie) => (
               movie.saved 
-              ? <MoviesCard
-                  key={movie.id.toString()}
+              && <MoviesCard
+                  key={movie.id}
                   isInSearchResults={false} 
                   title={movie.nameRU}
                   duration={formatDuration(movie.duration)}
@@ -46,7 +47,6 @@ export default function SavedMovies({ goSearch, formatDuration, onDelete, setPop
                   isSaved={movie.saved}
                   onDelete={onDelete}
                 />
-              : <></>
             ))}
           </MoviesCardList>
         </section>     

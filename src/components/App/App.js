@@ -26,35 +26,28 @@ function App() {
     const [movies, setMovies] = useState([]);
     const [savedMovies, setSavedMovies] = useState([]);
     const navigate = useNavigate();
-    const [isLoggedIn, setLoggedIn] = useState(true);
+    const [isLoggedIn, setLoggedIn] = useState(Boolean(localStorage.getItem('loggedInUserId')));
     const [isPopupOpen, setPopupOpen] = useState(false);
     const [popupMessage, setPopupMessage] = useState('');
     const [popupType, setPopupType] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        const loggedInUserId = localStorage.getItem('loggedInUserId');
-        if (loggedInUserId) {
-          navigate('movies');
-        } else {
-          setLoggedIn(false);
-        };
-      }, [isLoggedIn]);
-
-    useEffect(() => {
         if (isLoggedIn) {
             auth.getUserInfo()
-                .then((userObject) => {
-                if (userObject) {
-                    setCurrentUser(userObject);
-                }
-                })
-                .catch(console.error);
-        }
+            .then((userObject) => {
+            if (userObject) {
+                setCurrentUser(userObject);
+            }
+            })
+            .catch(console.error);
+        } else {
+            setLoggedIn(false);
+        };
     }, [isLoggedIn]);
 
     const goSearch = () => {
-        if (movies.length === 0) {
+        if (beatfilmMovies.length === 0) {
             setIsLoading(true);
             MoviesApi.getMovies()
             .then((res) => {
@@ -75,7 +68,7 @@ function App() {
     }
     
     useEffect(() => {     
-        if (savedMovies) {
+        if (beatfilmMovies) {
             const markedMovies = beatfilmMovies.map(obj => {
                 const savedMovie = savedMovies.find(item => item.movieId === obj.id);
                 if (savedMovie) {
@@ -86,12 +79,18 @@ function App() {
             });
             setMovies(markedMovies);
         }
-    }, [savedMovies, beatfilmMovies]);
+    }, [savedMovies]);
+
+    useEffect(() => { 
+        if (localStorage.getItem('query')) {
+            goSearch();
+        }
+    }, []);
+
 
     const saveMovie = (idToSave) => {
         const movieToSave = movies.find(movie => movie.id === idToSave);
-
-        MainApi.postSavedMovie({
+        const movieToSaveTransformed = {
             country: movieToSave.country,
             director: movieToSave.director,
             duration: movieToSave.duration,
@@ -103,10 +102,13 @@ function App() {
             movieId: movieToSave.id,
             nameRU: movieToSave.nameRU,
             nameEN: movieToSave.nameEN,
-        })
+        }
+
+        MainApi.postSavedMovie(movieToSaveTransformed)
         .then((res) => {
             if (res) {
-                getSavedMovies();
+                movieToSaveTransformed._id = res._id;
+                setSavedMovies(state => [ ...state, movieToSaveTransformed ]);
             }        
         })
         .catch(err => console.log(err));
@@ -146,6 +148,7 @@ function App() {
             if (res.message === 'Всё верно!') {
                 localStorage.setItem('loggedInUserId', res._id);
                 setLoggedIn(true);
+                navigate('movies')
             }
         })
         .catch((err) => {
@@ -212,6 +215,7 @@ function App() {
                     />
                 <main>
                     <Movies
+                        setMovies={setMovies}
                         goSearch={goSearch}
                         isLoading={isLoading}
                         saveMovie={saveMovie}
@@ -235,10 +239,12 @@ function App() {
                     />
                 <main>
                     <SavedMovies
+                        setMovies={setMovies}
                         goSearch={goSearch}
                         formatDuration={formatDuration}
                         onDelete={deleteMovie}
                         setPopupMessage={setPopupMessage}
+                        setPopupType={setPopupType}
                     />
                 </main>
                 <Footer/>
