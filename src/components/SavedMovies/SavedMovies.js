@@ -1,5 +1,4 @@
 import React from 'react'; 
-import { MoviesContext } from '../../contexts/MoviesContext';
 import { useState, useEffect } from 'react';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import MoviesCard from '../MoviesCard/MoviesCard';
@@ -7,18 +6,26 @@ import SearchForm from '../SearchForm/SearchForm';
 import './SavedMovies.css';
 import * as Constants from '../../constants/constants';
 
-export default function SavedMovies({ goSearch, formatDuration, onDelete, setPopupMessage, setPopupType }) {
-  const movies = React.useContext(MoviesContext);
+export default function SavedMovies({ savedMovies, formatDuration, onDelete, setPopupMessage, setPopupType }) {
   
-  const [moviesToRrender, setMoviesToRrender] = useState(movies);
-  const [isShorts, setShorts] = useState(false);
-  const [searchInput, setSearchInput] = useState('');
+  const [filteredMovies, setFilteredMovies] = useState(savedMovies);
+  const [isShorts, setShorts] = useState(Boolean(localStorage.getItem('isShortsOnSavedPage')));
+  const [searchInput, setSearchInput] = useState(localStorage.getItem('queryOnSavedPage'));
 
   useEffect(() => {
-    if (searchInput !== '')
-      setMoviesToRrender(prev => prev.filter(movie => movie.nameRU.toLowerCase().includes(searchInput.toLowerCase())));
-    if (isShorts) {
-      setMoviesToRrender(prev => prev.filter(movie => movie.duration <= Constants.SHORTS_DURATION));
+    let tempFilteredMovies;
+    if ((searchInput !== null && searchInput !== '') && isShorts) {
+      tempFilteredMovies = savedMovies.filter(movie => movie.nameRU.toLowerCase().includes(searchInput.toLowerCase()));
+      tempFilteredMovies = tempFilteredMovies.filter(movie => movie.duration <= Constants.SHORTS_DURATION)
+      setFilteredMovies(prev => tempFilteredMovies);
+    } else if (isShorts) {
+      tempFilteredMovies = savedMovies.filter(movie => movie.duration <= Constants.SHORTS_DURATION)
+      setFilteredMovies(prev => tempFilteredMovies);
+    } else if (searchInput !== '' && searchInput !== null ) {
+      tempFilteredMovies = savedMovies.filter(movie => movie.nameRU.toLowerCase().includes(searchInput.toLowerCase()));
+      setFilteredMovies(prev => tempFilteredMovies);
+    } else {
+      setFilteredMovies(prev => savedMovies);
     }
   }, [searchInput, isShorts]);
 
@@ -28,25 +35,25 @@ export default function SavedMovies({ goSearch, formatDuration, onDelete, setPop
             isShorts={isShorts}
             setShorts={setShorts}
             isSavedMoviesPage={true}
-            goSearch={goSearch}
             setSearchInput={setSearchInput}
             setPopupMessage={setPopupMessage}
             setPopupType={setPopupType}
           />
-          <MoviesCardList>
-            {moviesToRrender && moviesToRrender.map((movie) => (
-              movie.saved 
-              && <MoviesCard
-                  key={movie.id}
-                  isInSearchResults={false} 
-                  title={movie.nameRU}
-                  duration={formatDuration(movie.duration)}
-                  poster={'https://api.nomoreparties.co' + movie.image.url}
-                  trailerLink={movie.trailerLink}
-                  movieId={movie.id}
-                  isSaved={movie.saved}
-                  onDelete={onDelete}
-                />
+          <MoviesCardList
+            isNothingFound={(filteredMovies !== null && filteredMovies.length === 0 && searchInput !== '' && savedMovies.length !== 0) && true}
+            >
+            {filteredMovies && filteredMovies.map((movie) => (
+              <MoviesCard
+                key={movie._id}
+                isInSearchResults={false} 
+                title={movie.nameRU}
+                duration={formatDuration(movie.duration)}
+                poster={movie.image}
+                trailerLink={movie.trailerLink}
+                movieId={movie.movieId}
+                isSaved={movie.saved}
+                onDelete={onDelete}
+              />
             ))}
           </MoviesCardList>
         </section>     

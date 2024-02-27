@@ -23,8 +23,8 @@ import './App.css';
 function App() {    
     const [currentUser, setCurrentUser] = useState({});
     const [beatfilmMovies, setBeatfilmMovies] = useState([]);
-    const [movies, setMovies] = useState([]);
-    const [savedMovies, setSavedMovies] = useState([]);
+    const [movies, setMovies] = useState(JSON.parse(localStorage.getItem('movies')));
+    const [savedMovies, setSavedMovies] = useState(JSON.parse(localStorage.getItem('savedMovies')));
     const navigate = useNavigate();
     const [isLoggedIn, setLoggedIn] = useState(Boolean(localStorage.getItem('loggedInUserId')));
     const [isPopupOpen, setPopupOpen] = useState(false);
@@ -41,34 +41,40 @@ function App() {
             }
             })
             .catch(console.error);
+
+            getSavedMovies();
         } else {
             setLoggedIn(false);
         };
     }, [isLoggedIn]);
 
     const goSearch = () => {
-        if (beatfilmMovies.length === 0) {
+        if (JSON.parse(localStorage.getItem('movies')) === null) {
             setIsLoading(true);
             MoviesApi.getMovies()
             .then((res) => {
                 setBeatfilmMovies(res);
-                getSavedMovies();
             })
             .catch(err => console.log(err))
+            .finally(setTimeout(() => {setIsLoading(false)}, 1000));
         }
     }
+
+
+
+
 
     const getSavedMovies = () => {
         MainApi.getSavedMovies()
         .then((res) => {
-            setSavedMovies(res);
+            localStorage.setItem('savedMovies', JSON.stringify(res));
+            setSavedMovies(prev => res);
         })
         .catch(err => console.log(err))
-        .finally(setIsLoading(false));
     }
     
     useEffect(() => {     
-        if (beatfilmMovies) {
+        if (beatfilmMovies.length !== 0) {
             const markedMovies = beatfilmMovies.map(obj => {
                 const savedMovie = savedMovies.find(item => item.movieId === obj.id);
                 if (savedMovie) {
@@ -77,16 +83,26 @@ function App() {
                     return { ...obj, saved: false };
                 }
             });
-            setMovies(markedMovies);
+            localStorage.setItem('movies', JSON.stringify(markedMovies));
+            setMovies(prev => markedMovies);
+        }
+    }, [beatfilmMovies, savedMovies]);
+
+    useEffect(() => {     
+        if (movies) {
+            const markedMovies = movies.map(obj => {
+                const savedMovie = savedMovies.find(item => item.movieId === obj.id);
+                if (savedMovie) {
+                    return { ...obj, _id: savedMovie._id, saved: true };
+                } else {
+                    return { ...obj, saved: false };
+                }
+            });
+            localStorage.setItem('movies', JSON.stringify(markedMovies));
+            console.log('SETTING MARKED MOVIES TO MOVIES');
+            setMovies(prev => markedMovies);
         }
     }, [savedMovies]);
-
-    useEffect(() => { 
-        if (localStorage.getItem('query')) {
-            goSearch();
-        }
-    }, []);
-
 
     const saveMovie = (idToSave) => {
         const movieToSave = movies.find(movie => movie.id === idToSave);
@@ -107,7 +123,9 @@ function App() {
         MainApi.postSavedMovie(movieToSaveTransformed)
         .then((res) => {
             if (res) {
+                movieToSave.saved = true;
                 movieToSaveTransformed._id = res._id;
+                localStorage.setItem('savedMovies', JSON.stringify([ ...savedMovies, movieToSaveTransformed ]));
                 setSavedMovies(state => [ ...state, movieToSaveTransformed ]);
             }        
         })
@@ -116,10 +134,13 @@ function App() {
     
     const deleteMovie = (id) => {
         const movieToMarkDeleted = savedMovies.find(movie => movie.movieId === id);
+        console.log(movieToMarkDeleted);
         movieToMarkDeleted && MainApi.deleteMovie(movieToMarkDeleted._id)
         .then((res) => {
             if (res.acknowledged === true) {
-                setSavedMovies((state) => state.filter((item) => item.movieId !== id));
+                let tempSavedMovies = savedMovies.filter(item => item.movieId !== id);
+                localStorage.setItem('savedMovies', JSON.stringify(tempSavedMovies));
+                setSavedMovies(prev => tempSavedMovies);
             }
         })
         .catch(err => console.log(err))
@@ -169,7 +190,12 @@ function App() {
                 setCurrentUser({});
                 setLoggedIn(false);
                 localStorage.removeItem('query');
+                localStorage.removeItem('queryOnSavedPage');
                 localStorage.removeItem('isShorts');
+                localStorage.removeItem('isShortsOnSavedPage');
+                localStorage.removeItem('movies');
+                localStorage.removeItem('results');
+                localStorage.removeItem('savedMovies');
                 navigate('/')
             }})
         .catch(console.error);
@@ -215,7 +241,6 @@ function App() {
                     />
                 <main>
                     <Movies
-                        setMovies={setMovies}
                         goSearch={goSearch}
                         isLoading={isLoading}
                         saveMovie={saveMovie}
@@ -239,7 +264,7 @@ function App() {
                     />
                 <main>
                     <SavedMovies
-                        setMovies={setMovies}
+                        savedMovies={savedMovies}
                         goSearch={goSearch}
                         formatDuration={formatDuration}
                         onDelete={deleteMovie}

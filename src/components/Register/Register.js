@@ -109,6 +109,7 @@ export default function Register({ onRegister }) {
                         id="email"
                         name="email"
                         type="email"
+                        pattern="[a-z0-9_%+\-\.]+@[a-z0-9\-\.]+\.[a-z]{2,4}$"
                         placeholder="E-mail"
                         required
                     />

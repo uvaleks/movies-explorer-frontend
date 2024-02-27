@@ -11,9 +11,8 @@ import * as Constants from '../../constants/constants';
 export default function Movies({ goSearch, isLoading, saveMovie, formatDuration, onDelete, setPopupMessage, setPopupType }) {
   const movies = React.useContext(MoviesContext);
 
-  const [moviesToRrender, setMoviesToRrender] = useState([]);
-  const [renderedMoviesCount, setRenderedMoviesCount] = useState(0);
-  const [visibleElements, setVisibleElements] = useState([]);
+  const [filteredMovies, setFilteredMovies] = useState(JSON.parse(localStorage.getItem('results')));
+  const [visibleElements, setVisibleElements] = useState(filteredMovies);
 
   const [displayedElements, setDisplayedElements] = useState(0);
   const [displayedElementsIncrement, setDisplayedElementsIncrement] = useState(3);
@@ -36,16 +35,21 @@ export default function Movies({ goSearch, isLoading, saveMovie, formatDuration,
   }, []);
 
   useEffect(() => {
-    if (searchInput !== '')
-    setMoviesToRrender(prev => movies.filter(movie => movie.nameRU.toLowerCase().includes(searchInput.toLowerCase())));
-    if (isShorts) {
-      setMoviesToRrender(prev => prev.filter(movie => movie.duration <= Constants.SHORTS_DURATION));
+    if (movies) {
+      console.log('EFFECT OF UPDATING FILTERING');
+      let tempFilteredMovies;
+      if (searchInput !== null && searchInput !== '') {
+        tempFilteredMovies = movies.filter(movie => movie.nameRU.toLowerCase().includes(searchInput.toLowerCase()));
+        localStorage.setItem('results', JSON.stringify(tempFilteredMovies));
+        setFilteredMovies(prev => tempFilteredMovies);
+        if (isShorts) {
+          tempFilteredMovies = tempFilteredMovies.filter(movie => movie.duration <= Constants.SHORTS_DURATION);
+          localStorage.setItem('results', JSON.stringify(tempFilteredMovies));
+          setFilteredMovies(prev => tempFilteredMovies);
+        }
+      }
     }
-  }, [searchInput, isShorts]);
-
-  useEffect(() => {
-    setRenderedMoviesCount(moviesToRrender.length);
-  }, [moviesToRrender]);
+  }, [searchInput, isShorts, movies]);
 
   useEffect(() => {
     let timeoutId;
@@ -72,17 +76,20 @@ export default function Movies({ goSearch, isLoading, saveMovie, formatDuration,
     };
   }, []);
 
+useEffect(() => {
+  let tempVisibleElements;
+    if (filteredMovies && filteredMovies.length > displayedElements) {
+      tempVisibleElements = filteredMovies.slice(0, displayedElements)
+      setVisibleElements(prev => tempVisibleElements);
+    } else {
+      tempVisibleElements = filteredMovies;
+      setVisibleElements(prev => tempVisibleElements);
+    }
+}, [displayedElements, filteredMovies]);
+
   const handleMore = () => {
     setDisplayedElements(Number(displayedElements) + Number(displayedElementsIncrement));
   }
-
-  useEffect(() => {
-    if (renderedMoviesCount > displayedElements) {
-      setVisibleElements(prev => moviesToRrender.slice(0, displayedElements));
-    } else {
-      setVisibleElements(prev => moviesToRrender);
-    }
-  }, [displayedElements, moviesToRrender, renderedMoviesCount]);
 
     return (
         <section className='movies'>
@@ -96,25 +103,25 @@ export default function Movies({ goSearch, isLoading, saveMovie, formatDuration,
             setPopupType={setPopupType}
           />
           <MoviesCardList
-            isNothingFound={((searchInput !== '') && (renderedMoviesCount === 0)) && (!isLoading) && true}
+            isNothingFound={(filteredMovies !== null && filteredMovies.length === 0 && searchInput !== '' && !isLoading) && true}
           >    
-              {visibleElements && visibleElements.map((movie) => 
-                <MoviesCard
-                    key={movie.id}
-                    isInSearchResults={true} 
-                    title={movie.nameRU}
-                    duration={formatDuration(movie.duration)}
-                    poster={'https://api.nomoreparties.co' + movie.image.url}
-                    trailerLink={movie.trailerLink}
-                    movieId={movie.id}
-                    onSave={saveMovie}
-                    isSaved={movie.saved}
-                    onDelete={onDelete}
-                  />
-              )}
+            {visibleElements && visibleElements.map((movie) => 
+              <MoviesCard
+                key={movie.id}
+                isInSearchResults={true} 
+                title={movie.nameRU}
+                duration={formatDuration(movie.duration)}
+                poster={'https://api.nomoreparties.co' + movie.image.url}
+                trailerLink={movie.trailerLink}
+                movieId={movie.id}
+                onSave={saveMovie}
+                isSaved={movie.saved}
+                onDelete={onDelete}
+              />
+            )}
           </MoviesCardList>
           {isLoading && <Preloader/>}
-          {(displayedElements < renderedMoviesCount) && <More
+          {(displayedElements < (filteredMovies ? filteredMovies.length : 0)) && <More
             onMore={handleMore}
           />}
         </section>     

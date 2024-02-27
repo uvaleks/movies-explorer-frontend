@@ -6,6 +6,8 @@ export default function FilterCheckbox({ isShorts, setShorts, isSavedMoviesPage 
   const handleChange = () => {
     if (!isSavedMoviesPage) {
       localStorage.setItem('isShorts', !isShorts);
+    } else {
+      localStorage.setItem('isShortsOnSavedPage', !isShorts);
     }
     setShorts(!isShorts);
   }
@@ -15,7 +17,11 @@ export default function FilterCheckbox({ isShorts, setShorts, isSavedMoviesPage 
       if (localStorage.getItem('isShorts') !== null) {
         setShorts(() => localStorage.getItem('isShorts') === "false" ? false : true);
       }
-    } 
+    } else {
+      if (localStorage.getItem('isShortsOnSavedPage') !== null) {
+        setShorts(() => localStorage.getItem('isShortsOnSavedPage') === "false" ? false : true);
+      }
+    }
   }, [isSavedMoviesPage, setShorts]);
 
   return (

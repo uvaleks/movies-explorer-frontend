@@ -40,7 +40,7 @@ export default function Login({ onLogin, setAuthorized }) {
     const validateValues = (inputValues) => {
         if (!emailRef.current.validity.valid) {
           errors.email = "Укажите корректную почту";
-        }
+        } else {errors.email = ""}
         if (inputValues.password.length < 5) {
           errors.password = "Пароль слишком короткий";
         } 
@@ -52,6 +52,7 @@ export default function Login({ onLogin, setAuthorized }) {
       };
 
     useEffect(() => {
+        console.log('emailRef.current.validity.valid: ', emailRef.current.validity.valid);
         if (passwordRef.current.validity.valid && emailRef.current.validity.valid) {
             setSubmitButtonDisabled(false);
         } else {
@@ -78,6 +79,7 @@ export default function Login({ onLogin, setAuthorized }) {
                         id="email"
                         name="email"
                         type="email"
+                        pattern="[a-z0-9_%+\-\.]+@[a-z0-9\-\.]+\.[a-z]{2,4}$"
                         placeholder="E-mail"
                         required
                     />

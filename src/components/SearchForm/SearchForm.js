@@ -3,7 +3,7 @@ import FilterCheckbox from './FilterCheckbox/FilterCheckbox';
 import './SearchForm.css';
 
 export default function SearchForm({ goSearch, setSearchInput, isShorts, setShorts, isSavedMoviesPage, setPopupMessage, setPopupType }) {
-    const [inputField, setInputField] = useState('');
+    const [inputField, setInputField] = useState(isSavedMoviesPage ? localStorage.getItem('queryOnSavedPage') : localStorage.getItem('query'));
 
     const handleChange = (e) => {
         setInputField(e.target.value);
@@ -11,15 +11,21 @@ export default function SearchForm({ goSearch, setSearchInput, isShorts, setShor
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if ((inputField === '') || (!/^[а-яА-ЯёЁa-zA-Z]+$/.test(inputField))) {
+        if (!isSavedMoviesPage) {
+            if ((inputField === '') || (!/^[а-яА-ЯёЁa-zA-Z]+$/.test(inputField))) {
+                setPopupType('error');
+                setPopupMessage('Нужно ввести ключевое слово');
+            } else {
+                setSearchInput(inputField);
+                localStorage.setItem('query', inputField);
+                goSearch();
+            }
+        } else if ((inputField === '') || (/^[а-яА-ЯёЁa-zA-Z]+$/.test(inputField))) {
+            setSearchInput(inputField);
+            localStorage.setItem('queryOnSavedPage', inputField);
+        } else {
             setPopupType('error');
             setPopupMessage('Нужно ввести ключевое слово');
-        } else {
-            setSearchInput(inputField);
-            if (!isSavedMoviesPage) {
-                localStorage.setItem('query', inputField);
-            }
-            goSearch();
         }
     }
     
@@ -28,6 +34,11 @@ export default function SearchForm({ goSearch, setSearchInput, isShorts, setShor
             if (localStorage.getItem('query') !== null) {
                 setSearchInput(localStorage.getItem('query'));
                 setInputField(localStorage.getItem('query'));
+            }
+        } else {
+            if (localStorage.getItem('queryOnSavedPage') !== null) {
+                setSearchInput(localStorage.getItem('queryOnSavedPage'));
+                setInputField(localStorage.getItem('queryOnSavedPage'));
             }
         }
     }, [isSavedMoviesPage, setSearchInput]);
