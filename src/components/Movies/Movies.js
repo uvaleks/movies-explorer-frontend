@@ -32,11 +32,10 @@ export default function Movies({ goSearch, isLoading, saveMovie, formatDuration,
         setDisplayedElements(Constants.MOVIES_AT_SMALL_SCREEN_BY_DEFAULT);
         setDisplayedElementsIncrement(Constants.MOVIES_AT_SMALL_SCREEN_INCREMENT);
       }
-  }, []);
+  }, [searchInput, isShorts]);
 
   useEffect(() => {
     if (movies) {
-      console.log('EFFECT OF UPDATING FILTERING');
       let tempFilteredMovies;
       if (searchInput !== null && searchInput !== '') {
         tempFilteredMovies = movies.filter(movie => movie.nameRU.toLowerCase().includes(searchInput.toLowerCase()));

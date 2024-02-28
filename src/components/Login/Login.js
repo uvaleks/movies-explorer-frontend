@@ -52,7 +52,6 @@ export default function Login({ onLogin, setAuthorized }) {
       };
 
     useEffect(() => {
-        console.log('emailRef.current.validity.valid: ', emailRef.current.validity.valid);
         if (passwordRef.current.validity.valid && emailRef.current.validity.valid) {
             setSubmitButtonDisabled(false);
         } else {

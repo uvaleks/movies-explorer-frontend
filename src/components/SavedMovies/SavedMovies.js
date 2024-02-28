@@ -27,7 +27,7 @@ export default function SavedMovies({ savedMovies, formatDuration, onDelete, set
     } else {
       setFilteredMovies(prev => savedMovies);
     }
-  }, [searchInput, isShorts]);
+  }, [searchInput, isShorts, savedMovies]);
 
     return (
         <section className='saved-movies'>

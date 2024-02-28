@@ -10,8 +10,8 @@ import ProtectedRoute from '../ProtectedRoute';
 import { withRouter } from '../withRouter'
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
-import Movies from '../Movies/Movies';
-import SavedMovies from '../SavedMovies/SavedMovies';
+import MoviesPage from '../MoviesPage/MoviesPage';
+import SavedMoviesPage from '../SavedMoviesPage/SavedMoviesPage';
 import Main from '../Main/Main';
 import Login from '../Login/Login';
 import Register from '../Register/Register';
@@ -99,7 +99,6 @@ function App() {
                 }
             });
             localStorage.setItem('movies', JSON.stringify(markedMovies));
-            console.log('SETTING MARKED MOVIES TO MOVIES');
             setMovies(prev => markedMovies);
         }
     }, [savedMovies]);
@@ -134,7 +133,6 @@ function App() {
     
     const deleteMovie = (id) => {
         const movieToMarkDeleted = savedMovies.find(movie => movie.movieId === id);
-        console.log(movieToMarkDeleted);
         movieToMarkDeleted && MainApi.deleteMovie(movieToMarkDeleted._id)
         .then((res) => {
             if (res.acknowledged === true) {
@@ -196,6 +194,7 @@ function App() {
                 localStorage.removeItem('movies');
                 localStorage.removeItem('results');
                 localStorage.removeItem('savedMovies');
+                localStorage.removeItem('displayedElements');
                 navigate('/')
             }})
         .catch(console.error);
@@ -232,51 +231,6 @@ function App() {
         }
     }, [popupMessage])
 
-    function SearchMovies() {
-        return (
-            <>
-                <Header
-                    isOnMain={false}
-                    isAuthorized={isLoggedIn}
-                    />
-                <main>
-                    <Movies
-                        goSearch={goSearch}
-                        isLoading={isLoading}
-                        saveMovie={saveMovie}
-                        formatDuration={formatDuration}
-                        onDelete={deleteMovie}
-                        setPopupMessage={setPopupMessage}
-                        setPopupType={setPopupType}
-                    />
-                </main>
-                <Footer/>
-            </>
-      );
-    }
-
-    function SavedMoviesPage() {
-        return (
-            <>
-                <Header
-                    isOnMain={false}
-                    isAuthorized={isLoggedIn} 
-                    />
-                <main>
-                    <SavedMovies
-                        savedMovies={savedMovies}
-                        goSearch={goSearch}
-                        formatDuration={formatDuration}
-                        onDelete={deleteMovie}
-                        setPopupMessage={setPopupMessage}
-                        setPopupType={setPopupType}
-                    />
-                </main>
-                <Footer/>
-            </>
-      );
-    }
-
     function ProfilePage() {
         return (
             <>
@@ -311,20 +265,39 @@ function App() {
                                 <Footer/>
                                 </>
                             } />
+
                             <Route 
                                 path="/movies" 
                                 element={
                                     <ProtectedRoute
                                         isAuthorized={isLoggedIn}
-                                        component={SearchMovies}
+                                        component={MoviesPage} 
+                                        goSearch={goSearch}
+                                        isLoading={isLoading}
+                                        saveMovie={saveMovie}
+                                        formatDuration={formatDuration}
+                                        deleteMovie={deleteMovie}
+                                        setPopupMessage={setPopupMessage}
+                                        setPopupType={setPopupType}
+                                        isLoggedIn={isLoggedIn}
                                     />
-                            } />
+                                } 
+                            />
+
                             <Route path="/saved-movies" element={
                                 <ProtectedRoute
                                     isAuthorized={isLoggedIn}
                                     component={SavedMoviesPage}
+                                    savedMovies={savedMovies}
+                                    goSearch={goSearch}
+                                    formatDuration={formatDuration}
+                                    onDelete={deleteMovie}
+                                    setPopupMessage={setPopupMessage}
+                                    setPopupType={setPopupType}
+                                    isLoggedIn={isLoggedIn}
                                 />
                             } />
+                            
                             <Route path="/profile" element={
                                 <ProtectedRoute
                                     isAuthorized={isLoggedIn}

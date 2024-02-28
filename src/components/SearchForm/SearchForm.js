@@ -3,7 +3,7 @@ import FilterCheckbox from './FilterCheckbox/FilterCheckbox';
 import './SearchForm.css';
 
 export default function SearchForm({ goSearch, setSearchInput, isShorts, setShorts, isSavedMoviesPage, setPopupMessage, setPopupType }) {
-    const [inputField, setInputField] = useState(isSavedMoviesPage ? localStorage.getItem('queryOnSavedPage') : localStorage.getItem('query'));
+    const [inputField, setInputField] = useState(isSavedMoviesPage ? ((localStorage.getItem('queryOnSavedPage') !== null) ? localStorage.getItem('queryOnSavedPage') : '') : ((localStorage.getItem('query') !== null) ? localStorage.getItem('query') : ''));
 
     const handleChange = (e) => {
         setInputField(e.target.value);
