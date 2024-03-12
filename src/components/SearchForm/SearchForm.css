@@ -27,12 +27,17 @@
 }
 
 .search__form-input {
-    color: var(--dark4);
+    color: var(--dark);
     font-size: 18px;
     font-weight: 400;
     line-height: 20px;
     border: 0;
     width: inherit;
+    outline: none;
+}
+
+.search__form-input::placeholder {
+    color: var(--dark4);
 }
 
 .search__form-button {
@@ -75,7 +80,7 @@
     }
 }
 
-@media screen and (max-width: 425px) {
+@media screen and (max-width: 480px) {
     .search {
         margin: 0 10px;
     }

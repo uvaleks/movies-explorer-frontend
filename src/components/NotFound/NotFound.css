@@ -60,7 +60,7 @@
     }
 }
 
-@media screen and (max-width: 425px) {
+@media screen and (max-width: 480px) {
     .not-found__container {
         gap: 10px;
         width: 100%;

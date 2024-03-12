@@ -1,0 +1,109 @@
+.popup {
+    z-index: 2;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    background-color: rgba(0,0,0,.5);
+    visibility: hidden;
+    opacity: 0;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    transition: all .15s ease;
+}
+
+@media screen and (max-width: 615px) {
+    .popup {
+        padding: 0 20px;
+    }   
+}
+
+.popup__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    width: 430px;
+    max-height: 600px;
+    background-color: var(--light);
+    border-radius: 10px;
+    padding: 33px 35px 36px;
+    box-sizing: border-box;
+}
+
+@media screen and (max-width: 615px) {
+    .popup__container {
+        max-width: 100%;
+    }   
+}
+
+@media screen and (max-width: 425px) {
+    .popup__container {
+        padding: 25px 22px;
+    }   
+}
+
+.popup__status-icon {
+    height: 120px;
+    width: 120px;
+}
+
+.popup__title {
+    color: var(--dark);
+    font-size: 24px;
+    font-weight: 500;
+    line-height: normal;
+    margin: 0;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+@media screen and (max-width: 425px) {
+    .popup__title {
+        font-size: 20px;
+    }   
+}
+
+.popup__close-button {
+    background-color: unset;
+    border: none;
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    min-width: 32px;
+    min-height: 32px;
+    box-sizing: border-box;
+    background-image: url(../../images/close-to-burger.svg);
+    background-size: 32px;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 1;
+    transition: opacity .15s ease, all .5s ease;
+}
+
+.popup__close-button:hover {
+    opacity: .6;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 615px) {
+    .popup__close-button {
+        min-width: 20px;
+        min-height: 20px;
+        background-size: 20px;
+        top: -36px;
+        right: 0;
+    }   
+}
+
+.popup_opened {
+    visibility: visible;
+    opacity: 1;
+    transition: all .15s ease;
+}
+
+

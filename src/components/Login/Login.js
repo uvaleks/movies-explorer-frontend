@@ -4,24 +4,32 @@ import { useState, useEffect } from 'react';
 import './Login.css';
 import Logo from '../Logo/Logo';
 
-export default function Login({ setAuthorized }) {
+export default function Login({ onLogin, setAuthorized }) {
     const navigate = useNavigate();
     const emailRef = React.createRef();
     const passwordRef = React.createRef();
-
-
-    function onLoginClick() {
-        navigate('/');
-        setAuthorized(true);
-    }
-
     const [inputFields, setInputFields] = useState({
-        email: 'pochta@yandex.ru',
-        password: ''
-      });
-
+      email: '',
+      password: '',
+    });
     const [isSubmitButtonDisabled, setSubmitButtonDisabled] = useState(false);
     const [errors, setErrors] = useState({});
+
+    const resetForm = () => {
+      setInputFields({
+          email: '',
+          password: '',
+        });
+    };
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      onLogin(inputFields)
+        .then(() => {
+            resetForm();
+            navigate('/movies');
+          })
+    }
 
     const handleChange = (e) => {
         const newInputFields = { ...inputFields, [e.target.name]: e.target.value };
@@ -32,7 +40,7 @@ export default function Login({ setAuthorized }) {
     const validateValues = (inputValues) => {
         if (!emailRef.current.validity.valid) {
           errors.email = "Укажите корректную почту";
-        }
+        } else {errors.email = ""}
         if (inputValues.password.length < 5) {
           errors.password = "Пароль слишком короткий";
         } 
@@ -56,7 +64,10 @@ export default function Login({ setAuthorized }) {
         <div className="login">
             <div className="login__container">
                 <Logo/>
-                <form className="login__form"> 
+                <form 
+                  onSubmit={handleSubmit}
+                  className="login__form"
+                > 
                     <h2 className="login__greeting">Рады видеть!</h2>
                     <p className="login__input-title">E-mail</p>
                     <input
@@ -67,6 +78,7 @@ export default function Login({ setAuthorized }) {
                         id="email"
                         name="email"
                         type="email"
+                        pattern="[a-z0-9_%+\-\.]+@[a-z0-9\-\.]+\.[a-z]{2,4}$"
                         placeholder="E-mail"
                         required
                     />
@@ -86,7 +98,7 @@ export default function Login({ setAuthorized }) {
                     />
                     <span className="login__input-error">{errors.password}</span>
                     <p className="login__error">Вы ввели неправильный логин или пароль.</p>
-                    <button onClick={onLoginClick} className={"login__submit-button" + (isSubmitButtonDisabled ? " login__submit-button_disabled" : "")} type="submit" disabled={isSubmitButtonDisabled}>Войти</button>
+                    <button className={"login__submit-button" + (isSubmitButtonDisabled ? " login__submit-button_disabled" : "")} type="submit" disabled={isSubmitButtonDisabled}>Войти</button>
                 </form>
                 <div className="login__hint-container">
                     <p className="login__hint">Ещё не зарегистрированы?</p>

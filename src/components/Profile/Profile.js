@@ -1,18 +1,18 @@
-import { useNavigate } from "react-router-dom";
 import React from 'react'; 
 import { useState, useEffect } from 'react';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import './Profile.css';
 
-export default function Profile({ setAuthorized }) {
+export default function Profile({ handleUpdateUser, onSignOut }) {
+    const currentUser = React.useContext(CurrentUserContext);
     const nameRef = React.createRef();
     const emailRef = React.createRef();
 
     const [inputFields, setInputFields] = useState({
-        name: 'Виталий',
-        email: 'pochta@yandex.ru'
+        name: currentUser.name,
+        email: currentUser.email,
       });
       
-
     const [isInputsReadOnly, setInputsReadOnly] = useState(true);
     const [isButtonInEditState, setButtonInEditState] = useState(true);
     const [isSubmitButtonDisabled, setSubmitButtonDisabled] = useState(false);
@@ -43,22 +43,24 @@ export default function Profile({ setAuthorized }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setButtonInEditState(!isButtonInEditState)
-    }
-
-    const navigate = useNavigate();
-
-    function onSignout() {
-        navigate('/');
-        setAuthorized(false);
+        if (!isButtonInEditState) {
+            handleUpdateUser(inputFields);
+            setButtonInEditState(true)
+        } else {
+            setButtonInEditState(false)
+        }
     }
 
     useEffect(() => {
-        if (nameRef.current.validity.valid && emailRef.current.validity.valid) {
-            setSubmitButtonDisabled(false);
-        } else {
-            setSubmitButtonDisabled(true);
-        }
+        if (!isButtonInEditState) {
+            if (currentUser.name === nameRef.current.value && currentUser.email === emailRef.current.value) {
+                setSubmitButtonDisabled(true);
+            } else if (nameRef.current.validity.valid && emailRef.current.validity.valid) {
+                setSubmitButtonDisabled(false);
+            } else {
+                setSubmitButtonDisabled(true);
+            }
+        } 
     }, [nameRef, emailRef]);
 
     useEffect(() => {
@@ -69,8 +71,11 @@ export default function Profile({ setAuthorized }) {
 
     return (
         <div className="profile">
-            <form className="profile__form"> 
-                    <h2 className="profile__greeting">Привет, Виталий!</h2>
+            <form 
+                className="profile__form"
+                onSubmit={handleSubmit}
+            > 
+                    <h2 className="profile__greeting">{"Привет, " + currentUser.name + "!"}</h2>
                     <div className="profile__input-container">Имя
                         <input
                             onChange={handleChange}
@@ -95,6 +100,7 @@ export default function Profile({ setAuthorized }) {
                             value={inputFields.email}
                             name="email"
                             type="email"
+                            pattern="[a-z0-9_%+\-\.]+@[a-z0-9\-\.]+\.[a-z]{2,4}$"
                             placeholder="E-mail"
                             readOnly={isInputsReadOnly} 
                             required
@@ -102,14 +108,13 @@ export default function Profile({ setAuthorized }) {
                     </div>
                     <span className="profile__input-error">{errors.email}</span>
                     <p className="profile__error">При обновлении профиля произошла ошибка</p>
-                    <button 
-                        onClick={handleSubmit}
+                    <button
                         className={(isButtonInEditState ? "profile__edit-button" : "profile__submit-button") + ((!isButtonInEditState && isSubmitButtonDisabled) ? " profile__submit-button_disabled" : "")}
                         disabled={isSubmitButtonDisabled}
                         type="submit"
                     >{(isButtonInEditState ? "Редактировать" : "Сохранить")}</button>
                     {isButtonInEditState && 
-                        <button onClick={onSignout} className="profile__quit-button" type="button">Выйти из аккаунта</button>
+                        <button onClick={onSignOut} className="profile__quit-button" type="button">Выйти из аккаунта</button>
                     }
             </form>
         </div>
